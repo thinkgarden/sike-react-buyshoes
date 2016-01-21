@@ -318,6 +318,11 @@ a {
   color: #fff;
 }
 
+.adjust-qty--gray {
+  margin: 15px 0;
+  height: 60px;
+}
+
 .checkout {
   /*background: rgba(0,0,255,0.3);*/
 }
@@ -438,3 +443,4 @@ a {
     left: 0;
   }
 }
+
