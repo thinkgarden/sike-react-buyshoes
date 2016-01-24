@@ -10,7 +10,7 @@ server:
 .PHONY: js
 js:
 	mkdir -p build
-	babel --watch js/app.jsx --out-file build/app.js
+	webpack --progress --watch js/app.jsx build/app.js --module-bind "js=babel" --module-bind "jsx=babel" -d
 
 .PHONY: all
 all:
