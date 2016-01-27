@@ -1,10 +1,17 @@
 const React = require("react");
-const {cartItems,products} = require("../data.js");
-const QuantityControl = require("./QuantityControl.js");
+const {products} = require("../data.js");
+const CartStore = require("../stores/CartStore");
+const {removeCartItem} = CartStore;
+const QuantityControl = require("./QuantityControl");
 
 let CartItem = React.createClass({
+  componentDidMount(){
+    CartStore.addChangeListener(this.forceUpdate.bind(this));
+  },
   render() {
-    let {id,quantity} = this.props.cartitem;
+    let {item} = this.props;
+    let {id,quantity} = this.props.item;
+
     return (
       <div className="cart-item">
         <div className="cart-item__top-part">
@@ -19,10 +26,10 @@ let CartItem = React.createClass({
                {`$${products[id].price}` + ( (quantity > 1) ? ` × ${quantity}`:``) }
             </div>
           </div>
-          <img className="cart-item__trash" src={"img/trash-icon.svg"}/>
+          <img className="cart-item__trash" onClick={removeCartItem.bind(this,id)} src={"img/trash-icon.svg"}/>
         </div>
         <div className="cart-item__qty">
-          <QuantityControl item={cartItems[id]} variant="gray" />
+          <QuantityControl item={item} variant="gray" />
         </div>
       </div>
     );
