@@ -1,7 +1,7 @@
 const React = require('react');
 const {products} = require("../data.js");
 const Product = require("./Product.js");
-const ConnectedStore = require("./ConnectedStore");
+const MakeConnectedComponent = require("./MakeConnectedComponent");
 const CartStore = require("../stores/CartStore");
 const LikedStore = require("../stores/LikedStore");
 
@@ -22,20 +22,22 @@ let Products = React.createClass({
   }
 });
 
-let ConnectedProducts = React.createClass({
-  render() {
-    return (
-      <ConnectedStore store={CartStore} propNames={["cartItems"]}>
-        {propsOfCartStore => {
-          return (
-            <ConnectedStore store={LikedStore} propNames={["likedItems"]} >
-              {propsOfLikeStore => <Products {...propsOfLikeStore} {...propsOfCartStore}/>}
-            </ConnectedStore>
-          )
-        }}
-      </ConnectedStore>
-    );
-  }
-});
+// let ConnectedProducts = React.createClass({
+//   render() {
+//     return (
+//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
+//         {propsOfCartStore => {
+//           return (
+//             <ConnectedStore store={LikedStore} propNames={["likedItems"]} >
+//               {propsOfLikeStore => <Products {...propsOfLikeStore} {...propsOfCartStore}/>}
+//             </ConnectedStore>
+//           )
+//         }}
+//       </ConnectedStore>
+//     );
+//   }
+// });
 
- module.exports = ConnectedProducts;
+ module.exports = MakeConnectedComponent(
+    MakeConnectedComponent(Products,CartStore,"cartItems"), LikedStore,"likedItems");
+

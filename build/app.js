@@ -18765,8 +18765,6 @@
 
 	"use strict";
 	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
 	var React = __webpack_require__(/*! react */ 1);
 	
 	var _require = __webpack_require__(/*! ../data.js */ 160);
@@ -18774,7 +18772,7 @@
 	var products = _require.products;
 	
 	var Product = __webpack_require__(/*! ./Product.js */ 161);
-	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 167);
+	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 190);
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
 	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
 	
@@ -18798,27 +18796,23 @@
 	  }
 	});
 	
-	var ConnectedProducts = React.createClass({
-	  displayName: "ConnectedProducts",
+	// let ConnectedProducts = React.createClass({
+	//   render() {
+	//     return (
+	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
+	//         {propsOfCartStore => {
+	//           return (
+	//             <ConnectedStore store={LikedStore} propNames={["likedItems"]} >
+	//               {propsOfLikeStore => <Products {...propsOfLikeStore} {...propsOfCartStore}/>}
+	//             </ConnectedStore>
+	//           )
+	//         }}
+	//       </ConnectedStore>
+	//     );
+	//   }
+	// });
 	
-	  render: function render() {
-	    return React.createElement(
-	      ConnectedStore,
-	      { store: CartStore, propNames: ["cartItems"] },
-	      function (propsOfCartStore) {
-	        return React.createElement(
-	          ConnectedStore,
-	          { store: LikedStore, propNames: ["likedItems"] },
-	          function (propsOfLikeStore) {
-	            return React.createElement(Products, _extends({}, propsOfLikeStore, propsOfCartStore));
-	          }
-	        );
-	      }
-	    );
-	  }
-	});
-	
-	module.exports = ConnectedProducts;
+	module.exports = MakeConnectedComponent(MakeConnectedComponent(Products, CartStore, "cartItems"), LikedStore, "likedItems");
 
 /***/ },
 /* 160 */
@@ -19451,7 +19445,7 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 167);
+	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 190);
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
 	var CartItem = __webpack_require__(/*! ./CartItem */ 168);
 	var Ps = __webpack_require__(/*! perfect-scrollbar */ 169);
@@ -19493,21 +19487,17 @@
 	  }
 	});
 	
-	var ConnectedCart = React.createClass({
-	  displayName: "ConnectedCart",
+	// let ConnectedCart = React.createClass({
+	//   render() {
+	//     return (
+	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
+	//         {propValues => <Cart {...propValues}/>}
+	//       </ConnectedStore>
+	//     );
+	//   }
+	// });
 	
-	  render: function render() {
-	    return React.createElement(
-	      ConnectedStore,
-	      { store: CartStore, propNames: ["cartItems"] },
-	      function (propValues) {
-	        return React.createElement(Cart, propValues);
-	      }
-	    );
-	  }
-	});
-	
-	module.exports = ConnectedCart;
+	module.exports = MakeConnectedComponent(Cart, CartStore, "cartItems");
 
 /***/ },
 /* 167 */
@@ -21214,6 +21204,72 @@
 	});
 	
 	module.exports = Checkout;
+
+/***/ },
+/* 190 */
+/*!*************************************************!*\
+  !*** ./js/components/MakeConnectedComponent.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 167);
+	
+	function MakeConnectedComponent(ViewComponent, store) {
+	  for (var _len = arguments.length, propNames = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	    propNames[_key - 2] = arguments[_key];
+	  }
+	
+	  // Note: The argument "ViewComponent" must be uppercase. Why?
+	
+	  // TODO: Define ConnectedViewComponent
+	
+	  var ConnectedViewComponent = (function (_React$Component) {
+	    _inherits(ConnectedViewComponent, _React$Component);
+	
+	    function ConnectedViewComponent() {
+	      _classCallCheck(this, ConnectedViewComponent);
+	
+	      _get(Object.getPrototypeOf(ConnectedViewComponent.prototype), "constructor", this).apply(this, arguments);
+	    }
+	
+	    _createClass(ConnectedViewComponent, [{
+	      key: "render",
+	      value: function render() {
+	        var _this = this;
+	
+	        return React.createElement(
+	          ConnectedStore,
+	          { store: store, propNames: propNames },
+	          function (prop) {
+	            return React.createElement(ViewComponent, _extends({}, prop, _this.props));
+	          }
+	        );
+	      }
+	    }]);
+	
+	    return ConnectedViewComponent;
+	  })(React.Component);
+	
+	  ;
+	
+	  // Return the component
+	  return ConnectedViewComponent;
+	}
+	
+	module.exports = MakeConnectedComponent;
 
 /***/ }
 /******/ ]);
