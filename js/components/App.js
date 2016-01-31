@@ -1,11 +1,8 @@
 const React = require("react");
-const {products, cartitems} = require("../data.js");
-const SiteTitle = require("./SiteTitle.js");
-const Products = require("./Products.js");
-const Cart = require("./Cart.js");
-const Checkout = require("./Checkout.js");
-
-
+const SiteTitle = require("./SiteTitle");
+const Products = require("./Products");
+const Cart = require("./Cart");
+const Checkout = require("./Checkout");
 
 let App =  React.createClass({
   tanggleSideBar(){
@@ -30,8 +27,8 @@ let App =  React.createClass({
         </div>
 
         <div className="site__right-sidebar">
-          <Cart />
-          <Checkout />
+          <Cart/>
+          <Checkout/>
         </div>
 
         <a className="site__right-sidebar-toggle" ref="sidebarTanggle" onClick={this.tanggleSideBar}>

@@ -12,7 +12,7 @@ let _cartItems = {};
 module.exports = {
 
   // Reader methods
-  getCartItems() {
+  cartItems() {
     return _cartItems;
   },
 

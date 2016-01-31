@@ -2,16 +2,27 @@ const React = require('react');
 const QuantityControl = require("./QuantityControl");
 const CartStore = require("../stores/CartStore");
 const {addCartItem} = CartStore;
+const LikedStore = require("../stores/LikedStore");
+
 let Product = React.createClass({
-  componentDidMount() {
-    CartStore.addChangeListener(this.forceUpdate.bind(this));
-  },
+
   onClick(productId) {
     addCartItem(productId);
   },
+  heartClick(productId) {
+    let {likedItems} = this.props;
+    if(!likedItems[productId]){
+      LikedStore.addLikedItem(productId);
+    }
+    else{
+      LikedStore.removeLikedItem(productId);
+    }
+
+  },
   render() {
+    let {cartItems, likedItems} = this.props;
     let {id,name,price,imagePath} = this.props.product;
-    let cartItems = CartStore.getCartItems();
+
     return (
       <div className="product">
         <div className="product__display">
@@ -37,7 +48,8 @@ let Product = React.createClass({
           <div className="product__name">
             {name}
           </div>
-          <img className="product__heart" src={"img/heart.svg"}/>
+          {(likedItems[id])?( <img className="product__heart" onClick={this.heartClick.bind(this,id)} src={"img/heart-liked.svg"}/>):( <img className="product__heart" onClick={this.heartClick.bind(this,id)} src={"img/heart.svg"}/>)}
+
         </div>
       </div>
     );

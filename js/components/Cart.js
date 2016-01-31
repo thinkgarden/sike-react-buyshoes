@@ -1,16 +1,19 @@
 const React = require('react');
-const CartItem = require("./CartItem.js");
+const ConnectedStore = require("./ConnectedStore");
 const CartStore = require("../stores/CartStore");
+const CartItem = require("./CartItem");
 const Ps = require("perfect-scrollbar");
 let Cart  = React.createClass({
   componentDidMount(){
     let $perfectScroll = React.findDOMNode(this.refs.perfectScroll);
     Ps.initialize($perfectScroll);
-    CartStore.addChangeListener(this.forceUpdate.bind(this))
+    // let store = this.props.store;
+    // store.addChangeListener(this.forceUpdate.bind(this));
   },
 
   render() {
-    let cartItems = CartStore.getCartItems();
+    // let cartItems = CartStore.getCartItems();
+    let {cartItems} = this.props;
     return (
       <div className="cart">
         <h3 className="cart__title">Shopping Cart</h3>
@@ -26,4 +29,17 @@ let Cart  = React.createClass({
   }
 });
 
-module.exports = Cart;
+let ConnectedCart = React.createClass({
+  render() {
+    return (
+      <ConnectedStore store={CartStore} propNames={["cartItems"]}>
+        {propValues => <Cart {...propValues}/>}
+      </ConnectedStore>
+    );
+  }
+});
+
+module.exports = ConnectedCart;
+
+
+

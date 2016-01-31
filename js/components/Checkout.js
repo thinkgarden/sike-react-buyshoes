@@ -6,7 +6,7 @@ let Checkout  = React.createClass({
     CartStore.addChangeListener(this.forceUpdate.bind(this));
   },
   render() {
-    let cartItems = CartStore.getCartItems();
+    let cartItems = CartStore.cartItems();
     let subtotal = 0;
     Object.keys(cartItems).forEach(key=>{
       let {quantity} = cartItems[key];
