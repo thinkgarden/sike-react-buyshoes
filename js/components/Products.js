@@ -1,17 +1,18 @@
 const React = require('react');
-const {products} = require("../data.js");
 const Product = require("./Product.js");
-const MakeConnectedComponent = require("./MakeConnectedComponent");
+const connect = require("./connect");
+// const MakeConnectedComponent = require("./MakeConnectedComponent");
 const CartStore = require("../stores/CartStore");
 const LikedStore = require("../stores/LikedStore");
+const ProductsStore = require("../stores/ProductsStore");
 
 let Products = React.createClass({
   render() {
-    let {cartItems,likedItems} = this.props;
-    let productNode = Object.keys(products).map(function (item,index) {
+    let {filteredProducts,cartItems,likedItems} = this.props;
+    let productNode = Object.keys(filteredProducts).map(function (item,index) {
       // console.log(product,index);
       return (
-        <Product key={index} product={products[item]} cartItems={cartItems} likedItems={likedItems}/>
+        <Product key={index} product={filteredProducts[item]} cartItems={cartItems} likedItems={likedItems}/>
       );
     });
     return (
@@ -37,7 +38,8 @@ let Products = React.createClass({
 //     );
 //   }
 // });
-
- module.exports = MakeConnectedComponent(
-    MakeConnectedComponent(Products,CartStore,"cartItems"), LikedStore,"likedItems");
-
+@connect(ProductsStore,"filteredProducts")
+@connect(LikedStore,"likedItems")
+@connect(CartStore,"cartItems")
+class ConnectedProducts extends Products {}
+module.exports = ConnectedProducts;

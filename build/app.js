@@ -18677,8 +18677,8 @@
 	var React = __webpack_require__(/*! react */ 1);
 	var SiteTitle = __webpack_require__(/*! ./SiteTitle */ 158);
 	var Products = __webpack_require__(/*! ./Products */ 159);
-	var Cart = __webpack_require__(/*! ./Cart */ 166);
-	var Checkout = __webpack_require__(/*! ./Checkout */ 189);
+	var Cart = __webpack_require__(/*! ./Cart */ 170);
+	var Checkout = __webpack_require__(/*! ./Checkout */ 192);
 	
 	var App = React.createClass({
 	  displayName: "App",
@@ -18687,40 +18687,7 @@
 	    document.body.classList.toggle("js-show-right-sidebar");
 	  },
 	  render: function render() {
-	    return React.createElement(
-	      "div",
-	      { className: "site" },
-	      React.createElement(
-	        "div",
-	        { className: "bg" },
-	        React.createElement("div", { className: "bg__img" })
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "site__main" },
-	        React.createElement(
-	          "div",
-	          { className: "site__left-sidebar" },
-	          React.createElement(SiteTitle, null)
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "site__content" },
-	          React.createElement(Products, null)
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "site__right-sidebar" },
-	        React.createElement(Cart, null),
-	        React.createElement(Checkout, null)
-	      ),
-	      React.createElement(
-	        "a",
-	        { className: "site__right-sidebar-toggle", ref: "sidebarTanggle", onClick: this.tanggleSideBar },
-	        React.createElement("img", { src: "img/arrow-icon.svg" })
-	      )
-	    );
+	    return React.createElement("div", { className: "site" }, React.createElement("div", { className: "bg" }, React.createElement("div", { className: "bg__img" })), React.createElement("div", { className: "site__main" }, React.createElement("div", { className: "site__left-sidebar" }, React.createElement(SiteTitle, null)), React.createElement("div", { className: "site__content" }, React.createElement(Products, null))), React.createElement("div", { className: "site__right-sidebar" }, React.createElement(Cart, null), React.createElement(Checkout, null)), React.createElement("a", { className: "site__right-sidebar-toggle", ref: "sidebarTanggle", onClick: this.tanggleSideBar }, React.createElement("img", { src: "img/arrow-icon.svg" })));
 	  }
 	});
 	
@@ -18736,21 +18703,16 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
-	
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
 	var SiteTitle = React.createClass({
 	  displayName: "SiteTitle",
 	
+	  filterLike: function filterLike() {
+	    ProductsStore.toggleShowOnlyLike();
+	  },
 	  render: function render() {
-	    return React.createElement(
-	      "div",
-	      { className: "title" },
-	      React.createElement(
-	        "h2",
-	        null,
-	        "Buy Some Shoes"
-	      ),
-	      React.createElement("img", { className: "product__heart", src: 'img/heart-liked.svg' })
-	    );
+	    var showOnlyLike = ProductsStore.isShowOnlyLike();
+	    return React.createElement("div", { className: "title" }, React.createElement("h2", null, "Buy Some Shoes"), React.createElement("img", { className: "product__heart", src: showOnlyLike ? 'img/heart-liked.svg' : 'img/heart.svg', onClick: this.filterLike.bind(this) }));
 	  }
 	});
 	
@@ -18765,34 +18727,60 @@
 
 	"use strict";
 	
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;_function: while (_again) {
+	    var object = _x,
+	        property = _x2,
+	        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;if (getter === undefined) {
+	        return undefined;
+	      }return getter.call(receiver);
+	    }
+	  }
+	};
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
 	var React = __webpack_require__(/*! react */ 1);
-	
-	var _require = __webpack_require__(/*! ../data.js */ 160);
-	
-	var products = _require.products;
-	
-	var Product = __webpack_require__(/*! ./Product.js */ 161);
-	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 190);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
+	var Product = __webpack_require__(/*! ./Product.js */ 160);
+	var connect = __webpack_require__(/*! ./connect */ 166);
+	// const MakeConnectedComponent = require("./MakeConnectedComponent");
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
 	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
 	
 	var Products = React.createClass({
 	  displayName: "Products",
 	
 	  render: function render() {
 	    var _props = this.props;
+	    var filteredProducts = _props.filteredProducts;
 	    var cartItems = _props.cartItems;
 	    var likedItems = _props.likedItems;
 	
-	    var productNode = Object.keys(products).map(function (item, index) {
+	    var productNode = Object.keys(filteredProducts).map(function (item, index) {
 	      // console.log(product,index);
-	      return React.createElement(Product, { key: index, product: products[item], cartItems: cartItems, likedItems: likedItems });
+	      return React.createElement(Product, { key: index, product: filteredProducts[item], cartItems: cartItems, likedItems: likedItems });
 	    });
-	    return React.createElement(
-	      "div",
-	      { className: "products" },
-	      productNode
-	    );
+	    return React.createElement("div", { className: "products" }, productNode);
 	  }
 	});
 	
@@ -18812,10 +18800,169 @@
 	//   }
 	// });
 	
-	module.exports = MakeConnectedComponent(MakeConnectedComponent(Products, CartStore, "cartItems"), LikedStore, "likedItems");
+	var ConnectedProducts = (function (_Products) {
+	  _inherits(ConnectedProducts, _Products);
+	
+	  function ConnectedProducts() {
+	    _classCallCheck(this, _ConnectedProducts);
+	
+	    _get(Object.getPrototypeOf(_ConnectedProducts.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  var _ConnectedProducts = ConnectedProducts;
+	  ConnectedProducts = connect(CartStore, "cartItems")(ConnectedProducts) || ConnectedProducts;
+	  ConnectedProducts = connect(LikedStore, "likedItems")(ConnectedProducts) || ConnectedProducts;
+	  ConnectedProducts = connect(ProductsStore, "filteredProducts")(ConnectedProducts) || ConnectedProducts;
+	  return ConnectedProducts;
+	})(Products);
+	
+	module.exports = ConnectedProducts;
 
 /***/ },
 /* 160 */
+/*!**********************************!*\
+  !*** ./js/components/Product.js ***!
+  \**********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 161);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
+	var addCartItem = CartStore.addCartItem;
+	
+	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
+	
+	var Product = React.createClass({
+	  displayName: "Product",
+	
+	  onClick: function onClick(productId) {
+	    addCartItem(productId);
+	  },
+	  heartClick: function heartClick(productId) {
+	    var likedItems = this.props.likedItems;
+	
+	    if (!likedItems[productId]) {
+	      LikedStore.addLikedItem(productId);
+	    } else {
+	      LikedStore.removeLikedItem(productId);
+	    }
+	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var cartItems = _props.cartItems;
+	    var likedItems = _props.likedItems;
+	    var _props$product = this.props.product;
+	    var id = _props$product.id;
+	    var name = _props$product.name;
+	    var price = _props$product.price;
+	    var imagePath = _props$product.imagePath;
+	
+	    return React.createElement("div", { className: "product" }, React.createElement("div", { className: "product__display" }, React.createElement("div", { className: "product__img-wrapper" }, React.createElement("img", { className: "product__img", src: imagePath })), cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement("div", { "class": "product__control" }, React.createElement("a", { className: "product__add", onClick: this.onClick.bind(this, id) }, React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" }))), React.createElement("div", { className: "product__price" }, "$" + price)), React.createElement("div", { className: "product__description" }, React.createElement("div", { className: "product__name" }, name), likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })));
+	  }
+	});
+	
+	module.exports = Product;
+
+/***/ },
+/* 161 */
+/*!******************************************!*\
+  !*** ./js/components/QuantityControl.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
+	var updateCartItemQuantity = CartStore.updateCartItemQuantity;
+	
+	var QuantityControl = React.createClass({
+	  displayName: "QuantityControl",
+	
+	  onClick: function onClick(productId, quantity) {
+	    if (quantity > 0) {
+	      updateCartItemQuantity(productId, quantity);
+	    }
+	  },
+	  render: function render() {
+	    var _props$item = this.props.item;
+	    var id = _props$item.id;
+	    var quantity = _props$item.quantity;
+	
+	    var variant = this.props.variant;
+	    return React.createElement("div", { className: "product__control" }, React.createElement("div", { className: "adjust-qty" + (variant ? " adjust-qty--" + variant : "") }, React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity - 1) }, "-"), React.createElement("div", { className: "adjust-qty__number" }, quantity), React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity + 1) }, "+")));
+	  }
+	});
+	module.exports = QuantityControl;
+
+/***/ },
+/* 162 */
+/*!********************************!*\
+  !*** ./js/stores/CartStore.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _require = __webpack_require__(/*! ../data.js */ 163);
+	
+	var products = _require.products;
+	
+	var EventEmitter = __webpack_require__(/*! events */ 164);
+	var emitter = new EventEmitter();
+	
+	function emitChange() {
+	  emitter.emit("change");
+	}
+	
+	var _cartItems = {};
+	
+	module.exports = {
+	
+	  // Reader methods
+	  cartItems: function cartItems() {
+	    return _cartItems;
+	  },
+	
+	  // Writer methods. These are the "actions".
+	  addCartItem: function addCartItem(productId) {
+	    if (!_cartItems[productId]) {
+	      _cartItems[productId] = {
+	        id: productId,
+	        quantity: 1
+	      };
+	    } else {
+	      _cartItems[productId][quantity] += 1;
+	    }
+	    emitChange();
+	  },
+	
+	  removeCartItem: function removeCartItem(productId) {
+	    delete _cartItems[productId];
+	    emitChange();
+	  },
+	
+	  updateCartItemQuantity: function updateCartItemQuantity(productId, quantity) {
+	    _cartItems[productId] = {
+	      id: productId,
+	      quantity: quantity
+	    };
+	    emitChange();
+	  },
+	
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	};
+
+/***/ },
+/* 163 */
 /*!********************!*\
   !*** ./js/data.js ***!
   \********************/
@@ -18914,207 +19061,6 @@
 	      price: 44.99,
 	      gender: "woman"
 	    }
-	  }
-	};
-
-/***/ },
-/* 161 */
-/*!**********************************!*\
-  !*** ./js/components/Product.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(/*! react */ 1);
-	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 162);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
-	var addCartItem = CartStore.addCartItem;
-	
-	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
-	
-	var Product = React.createClass({
-	  displayName: "Product",
-	
-	  onClick: function onClick(productId) {
-	    addCartItem(productId);
-	  },
-	  heartClick: function heartClick(productId) {
-	    var likedItems = this.props.likedItems;
-	
-	    if (!likedItems[productId]) {
-	      LikedStore.addLikedItem(productId);
-	    } else {
-	      LikedStore.removeLikedItem(productId);
-	    }
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var cartItems = _props.cartItems;
-	    var likedItems = _props.likedItems;
-	    var _props$product = this.props.product;
-	    var id = _props$product.id;
-	    var name = _props$product.name;
-	    var price = _props$product.price;
-	    var imagePath = _props$product.imagePath;
-	
-	    return React.createElement(
-	      "div",
-	      { className: "product" },
-	      React.createElement(
-	        "div",
-	        { className: "product__display" },
-	        React.createElement(
-	          "div",
-	          { className: "product__img-wrapper" },
-	          React.createElement("img", { className: "product__img", src: imagePath })
-	        ),
-	        cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement(
-	          "div",
-	          { "class": "product__control" },
-	          React.createElement(
-	            "a",
-	            { className: "product__add", onClick: this.onClick.bind(this, id) },
-	            React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" })
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "product__price" },
-	          "$" + price
-	        )
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "product__description" },
-	        React.createElement(
-	          "div",
-	          { className: "product__name" },
-	          name
-	        ),
-	        likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })
-	      )
-	    );
-	  }
-	});
-	
-	module.exports = Product;
-
-/***/ },
-/* 162 */
-/*!******************************************!*\
-  !*** ./js/components/QuantityControl.js ***!
-  \******************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var React = __webpack_require__(/*! react */ 1);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
-	var updateCartItemQuantity = CartStore.updateCartItemQuantity;
-	
-	var QuantityControl = React.createClass({
-	  displayName: "QuantityControl",
-	
-	  onClick: function onClick(productId, quantity) {
-	    if (quantity > 0) {
-	      updateCartItemQuantity(productId, quantity);
-	    }
-	  },
-	  render: function render() {
-	    var _props$item = this.props.item;
-	    var id = _props$item.id;
-	    var quantity = _props$item.quantity;
-	
-	    var variant = this.props.variant;
-	    return React.createElement(
-	      "div",
-	      { className: "product__control" },
-	      React.createElement(
-	        "div",
-	        { className: "adjust-qty" + (variant ? " adjust-qty--" + variant : "") },
-	        React.createElement(
-	          "a",
-	          { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity - 1) },
-	          "-"
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "adjust-qty__number" },
-	          quantity
-	        ),
-	        React.createElement(
-	          "a",
-	          { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity + 1) },
-	          "+"
-	        )
-	      )
-	    );
-	  }
-	});
-	module.exports = QuantityControl;
-
-/***/ },
-/* 163 */
-/*!********************************!*\
-  !*** ./js/stores/CartStore.js ***!
-  \********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var _require = __webpack_require__(/*! ../data.js */ 160);
-	
-	var products = _require.products;
-	
-	var EventEmitter = __webpack_require__(/*! events */ 164);
-	var emitter = new EventEmitter();
-	
-	function emitChange() {
-	  emitter.emit("change");
-	}
-	
-	var _cartItems = {};
-	
-	module.exports = {
-	
-	  // Reader methods
-	  cartItems: function cartItems() {
-	    return _cartItems;
-	  },
-	
-	  // Writer methods. These are the "actions".
-	  addCartItem: function addCartItem(productId) {
-	    if (!_cartItems[productId]) {
-	      _cartItems[productId] = {
-	        id: productId,
-	        quantity: 1
-	      };
-	    } else {
-	      _cartItems[productId][quantity] += 1;
-	    }
-	    emitChange();
-	  },
-	
-	  removeCartItem: function removeCartItem(productId) {
-	    delete _cartItems[productId];
-	    emitChange();
-	  },
-	
-	  updateCartItemQuantity: function updateCartItemQuantity(productId, quantity) {
-	    _cartItems[productId] = {
-	      id: productId,
-	      quantity: quantity
-	    };
-	    emitChange();
-	  },
-	
-	  addChangeListener: function addChangeListener(callback) {
-	    emitter.addListener("change", callback);
-	  },
-	
-	  removeChangeListener: function removeChangeListener(callback) {
-	    emitter.removeListener("change", callback);
 	  }
 	};
 
@@ -19398,7 +19344,7 @@
 
 	"use strict";
 	
-	var _require = __webpack_require__(/*! ../data */ 160);
+	var _require = __webpack_require__(/*! ../data */ 163);
 	
 	var products = _require.products;
 	
@@ -19437,70 +19383,137 @@
 
 /***/ },
 /* 166 */
-/*!*******************************!*\
-  !*** ./js/components/Cart.js ***!
-  \*******************************/
+/*!**********************************!*\
+  !*** ./js/components/connect.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var React = __webpack_require__(/*! react */ 1);
-	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 190);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
-	var CartItem = __webpack_require__(/*! ./CartItem */ 168);
-	var Ps = __webpack_require__(/*! perfect-scrollbar */ 169);
-	var Cart = React.createClass({
-	  displayName: "Cart",
+	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 167);
 	
-	  componentDidMount: function componentDidMount() {
-	    var $perfectScroll = React.findDOMNode(this.refs.perfectScroll);
-	    Ps.initialize($perfectScroll);
-	    // let store = this.props.store;
-	    // store.addChangeListener(this.forceUpdate.bind(this));
-	  },
+	function connect(store) {
+	    for (var _len = arguments.length, cartItems = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        cartItems[_key - 1] = arguments[_key];
+	    }
 	
-	  render: function render() {
-	    // let cartItems = CartStore.getCartItems();
-	    var cartItems = this.props.cartItems;
+	    return function (klass) {
 	
-	    return React.createElement(
-	      "div",
-	      { className: "cart" },
-	      React.createElement(
-	        "h3",
-	        { className: "cart__title" },
-	        "Shopping Cart"
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "cart__content", ref: "perfectScroll" },
-	        React.createElement(
-	          "h3",
-	          { className: "cart__title cart__title--spacer" },
-	          "Shopping Cart"
-	        ),
-	        Object.keys(cartItems).map(function (item, index) {
-	          return React.createElement(CartItem, { key: index, item: cartItems[item] });
-	        })
-	      )
-	    );
-	  }
-	});
+	        var klassReplacement = MakeConnectedComponent(klass, store, cartItems);
 	
-	// let ConnectedCart = React.createClass({
-	//   render() {
-	//     return (
-	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
-	//         {propValues => <Cart {...propValues}/>}
-	//       </ConnectedStore>
-	//     );
-	//   }
-	// });
+	        return klassReplacement;
+	    };
+	}
 	
-	module.exports = MakeConnectedComponent(Cart, CartStore, "cartItems");
+	module.exports = connect;
 
 /***/ },
 /* 167 */
+/*!*************************************************!*\
+  !*** ./js/components/MakeConnectedComponent.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+	
+	var _createClass = (function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	})();
+	
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;_function: while (_again) {
+	    var object = _x,
+	        property = _x2,
+	        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;if (getter === undefined) {
+	        return undefined;
+	      }return getter.call(receiver);
+	    }
+	  }
+	};
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 168);
+	
+	function MakeConnectedComponent(ViewComponent, store) {
+	  for (var _len = arguments.length, propNames = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	    propNames[_key - 2] = arguments[_key];
+	  }
+	
+	  // Note: The argument "ViewComponent" must be uppercase. Why?
+	
+	  // TODO: Define ConnectedViewComponent
+	  //  {...this.props}为了兼容嵌套的使用
+	
+	  var ConnectedViewComponent = (function (_React$Component) {
+	    _inherits(ConnectedViewComponent, _React$Component);
+	
+	    function ConnectedViewComponent() {
+	      _classCallCheck(this, ConnectedViewComponent);
+	
+	      _get(Object.getPrototypeOf(ConnectedViewComponent.prototype), "constructor", this).apply(this, arguments);
+	    }
+	
+	    _createClass(ConnectedViewComponent, [{
+	      key: "render",
+	      value: function render() {
+	        var _this = this;
+	
+	        return React.createElement(ConnectedStore, { store: store, propNames: propNames }, function (prop) {
+	          return React.createElement(ViewComponent, _extends({}, prop, _this.props));
+	        });
+	      }
+	    }]);
+	
+	    return ConnectedViewComponent;
+	  })(React.Component);
+	
+	  ;
+	
+	  // Return the component
+	  return ConnectedViewComponent;
+	}
+	
+	module.exports = MakeConnectedComponent;
+
+/***/ },
+/* 168 */
 /*!*****************************************!*\
   !*** ./js/components/ConnectedStore.js ***!
   \*****************************************/
@@ -19535,7 +19548,173 @@
 	module.exports = ConnectedStore;
 
 /***/ },
-/* 168 */
+/* 169 */
+/*!************************************!*\
+  !*** ./js/stores/ProductsStore.js ***!
+  \************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var EventEmitter = __webpack_require__(/*! events */ 164);
+	var emitter = new EventEmitter();
+	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
+	
+	var _products = {
+	  "jameson-vulc": {
+	    id: "jameson-vulc",
+	    name: "Jameson Vulc",
+	    price: 64.99,
+	    imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
+	    gender: "man"
+	  },
+	
+	  "marana-x-hook-ups": {
+	    id: "marana-x-hook-ups",
+	    name: "Marana X Hook-Up",
+	    price: 79.99,
+	    imagePath: "img/shoes/marana-x-hook-ups-black-orig.png",
+	    gender: "man"
+	  },
+	
+	  "jameson-e-lite": {
+	    id: "jameson-e-lite",
+	    name: "Jameson E-Lite",
+	    price: 69.99,
+	    imagePath: "img/shoes/jameson-e-lite-maroon-orig.png",
+	    gender: "man"
+	  },
+	
+	  "jameson-e-lite-julian-davidson-4": {
+	    id: "jameson-e-lite-julian-davidson-4",
+	    name: "Jameson E-Lite Julian Davidson",
+	    price: 74.99,
+	    imagePath: "img/shoes/jameson-e-lite-julian-davidson-4-black-gum-orig.png",
+	    gender: "man"
+	  },
+	
+	  "scout-womens-6": {
+	    id: "scout-womens-6",
+	    name: "Scout Women's",
+	    imagePath: "img/shoes/scout-womens-6-teal-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "scout-womens-coco-ho-5": {
+	    id: "scout-womens-coco-ho-5",
+	    name: "Scout Women's Coco Ho",
+	    imagePath: "img/shoes/scout-womens-coco-ho-5-olive-white-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "jameson-2-womens-8": {
+	    id: "jameson-2-womens-8",
+	    name: "Jameson 2 Women's",
+	    imagePath: "img/shoes/jameson-2-womens-8-black-white-gum-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "corby-womens-2": {
+	    id: "corby-womens-2",
+	    name: "Corby Women's",
+	    imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
+	    price: 44.99,
+	    gender: "woman"
+	  }
+	};
+	
+	var _showOnlyLike = false;
+	
+	function emitChange() {
+	  emitter.emit("change");
+	}
+	
+	module.exports = {
+	  // Readers
+	  products: function products() {
+	    return _products;
+	  },
+	
+	  filteredProducts: function filteredProducts() {
+	    // Return all products or only liked products, depending on _showOnlyLike
+	    if (_showOnlyLike) {
+	      var likedItems = LikedStore.likedItems();
+	      console.log(likedItems);
+	      return likedItems;
+	    } else {
+	      return _products;
+	    }
+	  },
+	
+	  // Actions
+	  toggleShowOnlyLike: function toggleShowOnlyLike() {
+	    _showOnlyLike = !_showOnlyLike;
+	    emitChange();
+	  },
+	  isShowOnlyLike: function isShowOnlyLike() {
+	    return _showOnlyLike;
+	  },
+	  addChangeListener: function addChangeListener(callback) {
+	    emitter.addListener("change", callback);
+	  },
+	
+	  removeChangeListener: function removeChangeListener(callback) {
+	    emitter.removeListener("change", callback);
+	  }
+	
+	};
+
+/***/ },
+/* 170 */
+/*!*******************************!*\
+  !*** ./js/components/Cart.js ***!
+  \*******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 167);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
+	var CartItem = __webpack_require__(/*! ./CartItem */ 171);
+	var Ps = __webpack_require__(/*! perfect-scrollbar */ 172);
+	var Cart = React.createClass({
+	  displayName: "Cart",
+	
+	  componentDidMount: function componentDidMount() {
+	    var $perfectScroll = React.findDOMNode(this.refs.perfectScroll);
+	    Ps.initialize($perfectScroll);
+	    // let store = this.props.store;
+	    // store.addChangeListener(this.forceUpdate.bind(this));
+	  },
+	
+	  render: function render() {
+	    // let cartItems = CartStore.getCartItems();
+	    var cartItems = this.props.cartItems;
+	
+	    return React.createElement("div", { className: "cart" }, React.createElement("h3", { className: "cart__title" }, "Shopping Cart"), React.createElement("div", { className: "cart__content", ref: "perfectScroll" }, React.createElement("h3", { className: "cart__title cart__title--spacer" }, "Shopping Cart"), Object.keys(cartItems).map(function (item, index) {
+	      return React.createElement(CartItem, { key: index, item: cartItems[item] });
+	    })));
+	  }
+	});
+	
+	// let ConnectedCart = React.createClass({
+	//   render() {
+	//     return (
+	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
+	//         {propValues => <Cart {...propValues}/>}
+	//       </ConnectedStore>
+	//     );
+	//   }
+	// });
+	
+	module.exports = MakeConnectedComponent(Cart, CartStore, "cartItems");
+
+/***/ },
+/* 171 */
 /*!***********************************!*\
   !*** ./js/components/CartItem.js ***!
   \***********************************/
@@ -19545,14 +19724,14 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	
-	var _require = __webpack_require__(/*! ../data.js */ 160);
+	var _require = __webpack_require__(/*! ../data.js */ 163);
 	
 	var products = _require.products;
 	
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
 	var removeCartItem = CartStore.removeCartItem;
 	
-	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 162);
+	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 161);
 	
 	var CartItem = React.createClass({
 	  displayName: "CartItem",
@@ -19566,46 +19745,14 @@
 	    var id = _props$item.id;
 	    var quantity = _props$item.quantity;
 	
-	    return React.createElement(
-	      "div",
-	      { className: "cart-item" },
-	      React.createElement(
-	        "div",
-	        { className: "cart-item__top-part" },
-	        React.createElement(
-	          "div",
-	          { className: "cart-item__image" },
-	          React.createElement("img", { src: products[id].imagePath })
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "cart-item__top-part__middle" },
-	          React.createElement(
-	            "div",
-	            { className: "cart-item__title" },
-	            id
-	          ),
-	          React.createElement(
-	            "div",
-	            { className: "cart-item__price" },
-	            "$" + products[id].price + (quantity > 1 ? " × " + quantity : "")
-	          )
-	        ),
-	        React.createElement("img", { className: "cart-item__trash", onClick: removeCartItem.bind(this, id), src: "img/trash-icon.svg" })
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "cart-item__qty" },
-	        React.createElement(QuantityControl, { item: item, variant: "gray" })
-	      )
-	    );
+	    return React.createElement("div", { className: "cart-item" }, React.createElement("div", { className: "cart-item__top-part" }, React.createElement("div", { className: "cart-item__image" }, React.createElement("img", { src: products[id].imagePath })), React.createElement("div", { className: "cart-item__top-part__middle" }, React.createElement("div", { className: "cart-item__title" }, id), React.createElement("div", { className: "cart-item__price" }, "$" + products[id].price + (quantity > 1 ? " × " + quantity : ""))), React.createElement("img", { className: "cart-item__trash", onClick: removeCartItem.bind(this, id), src: "img/trash-icon.svg" })), React.createElement("div", { className: "cart-item__qty" }, React.createElement(QuantityControl, { item: item, variant: "gray" })));
 	  }
 	});
 	
 	module.exports = CartItem;
 
 /***/ },
-/* 169 */
+/* 172 */
 /*!**************************************!*\
   !*** ./~/perfect-scrollbar/index.js ***!
   \**************************************/
@@ -19616,10 +19763,10 @@
 	 */
 	'use strict';
 	
-	module.exports = __webpack_require__(/*! ./src/js/main */ 170);
+	module.exports = __webpack_require__(/*! ./src/js/main */ 173);
 
 /***/ },
-/* 170 */
+/* 173 */
 /*!********************************************!*\
   !*** ./~/perfect-scrollbar/src/js/main.js ***!
   \********************************************/
@@ -19630,9 +19777,9 @@
 	 */
 	'use strict';
 	
-	var destroy = __webpack_require__(/*! ./plugin/destroy */ 171),
-	    initialize = __webpack_require__(/*! ./plugin/initialize */ 179),
-	    update = __webpack_require__(/*! ./plugin/update */ 188);
+	var destroy = __webpack_require__(/*! ./plugin/destroy */ 174),
+	    initialize = __webpack_require__(/*! ./plugin/initialize */ 182),
+	    update = __webpack_require__(/*! ./plugin/update */ 191);
 	
 	module.exports = {
 	  initialize: initialize,
@@ -19641,7 +19788,7 @@
 	};
 
 /***/ },
-/* 171 */
+/* 174 */
 /*!******************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/destroy.js ***!
   \******************************************************/
@@ -19652,9 +19799,9 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 172),
-	    h = __webpack_require__(/*! ../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ./instances */ 175);
+	var d = __webpack_require__(/*! ../lib/dom */ 175),
+	    h = __webpack_require__(/*! ../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ./instances */ 178);
 	
 	module.exports = function (element) {
 	  var i = instances.get(element);
@@ -19674,7 +19821,7 @@
 	};
 
 /***/ },
-/* 172 */
+/* 175 */
 /*!***********************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/dom.js ***!
   \***********************************************/
@@ -19759,7 +19906,7 @@
 	};
 
 /***/ },
-/* 173 */
+/* 176 */
 /*!**************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/helper.js ***!
   \**************************************************/
@@ -19770,8 +19917,8 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ./class */ 174),
-	    d = __webpack_require__(/*! ./dom */ 172);
+	var cls = __webpack_require__(/*! ./class */ 177),
+	    d = __webpack_require__(/*! ./dom */ 175);
 	
 	exports.toInt = function (x) {
 	  return parseInt(x, 10) || 0;
@@ -19844,7 +19991,7 @@
 	};
 
 /***/ },
-/* 174 */
+/* 177 */
 /*!*************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/class.js ***!
   \*************************************************/
@@ -19897,7 +20044,7 @@
 	};
 
 /***/ },
-/* 175 */
+/* 178 */
 /*!********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/instances.js ***!
   \********************************************************/
@@ -19908,11 +20055,11 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 172),
-	    defaultSettings = __webpack_require__(/*! ./default-setting */ 176),
-	    EventManager = __webpack_require__(/*! ../lib/event-manager */ 177),
-	    guid = __webpack_require__(/*! ../lib/guid */ 178),
-	    h = __webpack_require__(/*! ../lib/helper */ 173);
+	var d = __webpack_require__(/*! ../lib/dom */ 175),
+	    defaultSettings = __webpack_require__(/*! ./default-setting */ 179),
+	    EventManager = __webpack_require__(/*! ../lib/event-manager */ 180),
+	    guid = __webpack_require__(/*! ../lib/guid */ 181),
+	    h = __webpack_require__(/*! ../lib/helper */ 176);
 	
 	var instances = {};
 	
@@ -20012,7 +20159,7 @@
 	};
 
 /***/ },
-/* 176 */
+/* 179 */
 /*!**************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/default-setting.js ***!
   \**************************************************************/
@@ -20039,7 +20186,7 @@
 	};
 
 /***/ },
-/* 177 */
+/* 180 */
 /*!*********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/event-manager.js ***!
   \*********************************************************/
@@ -20121,7 +20268,7 @@
 	module.exports = EventManager;
 
 /***/ },
-/* 178 */
+/* 181 */
 /*!************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/lib/guid.js ***!
   \************************************************/
@@ -20142,7 +20289,7 @@
 	})();
 
 /***/ },
-/* 179 */
+/* 182 */
 /*!*********************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/initialize.js ***!
   \*********************************************************/
@@ -20153,19 +20300,19 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ../lib/class */ 174),
-	    h = __webpack_require__(/*! ../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ./instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 180);
+	var cls = __webpack_require__(/*! ../lib/class */ 177),
+	    h = __webpack_require__(/*! ../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ./instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 183);
 	
 	// Handlers
-	var clickRailHandler = __webpack_require__(/*! ./handler/click-rail */ 181),
-	    dragScrollbarHandler = __webpack_require__(/*! ./handler/drag-scrollbar */ 182),
-	    keyboardHandler = __webpack_require__(/*! ./handler/keyboard */ 183),
-	    mouseWheelHandler = __webpack_require__(/*! ./handler/mouse-wheel */ 184),
-	    nativeScrollHandler = __webpack_require__(/*! ./handler/native-scroll */ 185),
-	    selectionHandler = __webpack_require__(/*! ./handler/selection */ 186),
-	    touchHandler = __webpack_require__(/*! ./handler/touch */ 187);
+	var clickRailHandler = __webpack_require__(/*! ./handler/click-rail */ 184),
+	    dragScrollbarHandler = __webpack_require__(/*! ./handler/drag-scrollbar */ 185),
+	    keyboardHandler = __webpack_require__(/*! ./handler/keyboard */ 186),
+	    mouseWheelHandler = __webpack_require__(/*! ./handler/mouse-wheel */ 187),
+	    nativeScrollHandler = __webpack_require__(/*! ./handler/native-scroll */ 188),
+	    selectionHandler = __webpack_require__(/*! ./handler/selection */ 189),
+	    touchHandler = __webpack_require__(/*! ./handler/touch */ 190);
 	
 	module.exports = function (element, userSettings) {
 	  userSettings = typeof userSettings === 'object' ? userSettings : {};
@@ -20194,7 +20341,7 @@
 	};
 
 /***/ },
-/* 180 */
+/* 183 */
 /*!**************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/update-geometry.js ***!
   \**************************************************************/
@@ -20205,10 +20352,10 @@
 	 */
 	'use strict';
 	
-	var cls = __webpack_require__(/*! ../lib/class */ 174),
-	    d = __webpack_require__(/*! ../lib/dom */ 172),
-	    h = __webpack_require__(/*! ../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ./instances */ 175);
+	var cls = __webpack_require__(/*! ../lib/class */ 177),
+	    d = __webpack_require__(/*! ../lib/dom */ 175),
+	    h = __webpack_require__(/*! ../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ./instances */ 178);
 	
 	function getThumbSize(i, thumbSize) {
 	  if (i.settings.minScrollbarLength) {
@@ -20309,7 +20456,7 @@
 	};
 
 /***/ },
-/* 181 */
+/* 184 */
 /*!*****************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/click-rail.js ***!
   \*****************************************************************/
@@ -20320,9 +20467,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var h = __webpack_require__(/*! ../../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindClickRailHandler(element, i) {
 	  function pageOffset(el) {
@@ -20379,7 +20526,7 @@
 	};
 
 /***/ },
-/* 182 */
+/* 185 */
 /*!*********************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/drag-scrollbar.js ***!
   \*********************************************************************/
@@ -20390,10 +20537,10 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../../lib/dom */ 172),
-	    h = __webpack_require__(/*! ../../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var d = __webpack_require__(/*! ../../lib/dom */ 175),
+	    h = __webpack_require__(/*! ../../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindMouseScrollXHandler(element, i) {
 	  var currentLeft = null;
@@ -20492,7 +20639,7 @@
 	};
 
 /***/ },
-/* 183 */
+/* 186 */
 /*!***************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/keyboard.js ***!
   \***************************************************************/
@@ -20503,9 +20650,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var h = __webpack_require__(/*! ../../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindKeyboardHandler(element, i) {
 	  var hovered = false;
@@ -20626,7 +20773,7 @@
 	};
 
 /***/ },
-/* 184 */
+/* 187 */
 /*!******************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/mouse-wheel.js ***!
   \******************************************************************/
@@ -20637,9 +20784,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var h = __webpack_require__(/*! ../../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindMouseWheelHandler(element, i) {
 	  var shouldPrevent = false;
@@ -20776,7 +20923,7 @@
 	};
 
 /***/ },
-/* 185 */
+/* 188 */
 /*!********************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/native-scroll.js ***!
   \********************************************************************/
@@ -20787,8 +20934,8 @@
 	 */
 	'use strict';
 	
-	var instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindNativeScrollHandler(element, i) {
 	  i.event.bind(element, 'scroll', function () {
@@ -20802,7 +20949,7 @@
 	};
 
 /***/ },
-/* 186 */
+/* 189 */
 /*!****************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/selection.js ***!
   \****************************************************************/
@@ -20813,9 +20960,9 @@
 	 */
 	'use strict';
 	
-	var h = __webpack_require__(/*! ../../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var h = __webpack_require__(/*! ../../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindSelectionHandler(element, i) {
 	  function getRangeNode() {
@@ -20920,7 +21067,7 @@
 	};
 
 /***/ },
-/* 187 */
+/* 190 */
 /*!************************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/handler/touch.js ***!
   \************************************************************/
@@ -20931,8 +21078,8 @@
 	 */
 	'use strict';
 	
-	var instances = __webpack_require__(/*! ../instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 180);
+	var instances = __webpack_require__(/*! ../instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ../update-geometry */ 183);
 	
 	function bindTouchHandler(element, i, supportsTouch, supportsIePointer) {
 	  function shouldPreventDefault(deltaX, deltaY) {
@@ -21096,7 +21243,7 @@
 	};
 
 /***/ },
-/* 188 */
+/* 191 */
 /*!*****************************************************!*\
   !*** ./~/perfect-scrollbar/src/js/plugin/update.js ***!
   \*****************************************************/
@@ -21107,10 +21254,10 @@
 	 */
 	'use strict';
 	
-	var d = __webpack_require__(/*! ../lib/dom */ 172),
-	    h = __webpack_require__(/*! ../lib/helper */ 173),
-	    instances = __webpack_require__(/*! ./instances */ 175),
-	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 180);
+	var d = __webpack_require__(/*! ../lib/dom */ 175),
+	    h = __webpack_require__(/*! ../lib/helper */ 176),
+	    instances = __webpack_require__(/*! ./instances */ 178),
+	    updateGeometry = __webpack_require__(/*! ./update-geometry */ 183);
 	
 	module.exports = function (element) {
 	  var i = instances.get(element);
@@ -21139,7 +21286,7 @@
 	};
 
 /***/ },
-/* 189 */
+/* 192 */
 /*!***********************************!*\
   !*** ./js/components/Checkout.js ***!
   \***********************************/
@@ -21149,11 +21296,11 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	
-	var _require = __webpack_require__(/*! ../data.js */ 160);
+	var _require = __webpack_require__(/*! ../data.js */ 163);
 	
 	var products = _require.products;
 	
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 163);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
 	var Checkout = React.createClass({
 	  displayName: "Checkout",
 	
@@ -21169,107 +21316,11 @@
 	
 	      subtotal += price * quantity;
 	    });
-	    return React.createElement(
-	      "div",
-	      { className: "checkout" },
-	      React.createElement("hr", { className: "checkout__divider" }),
-	      React.createElement("input", { type: "text", className: "checkout__coupon-input", placeholder: "coupon code" }),
-	      React.createElement(
-	        "div",
-	        { className: "checkout__line" },
-	        React.createElement(
-	          "div",
-	          { className: "checkout__line__label" },
-	          "Subtotal"
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "checkout__line__amount" },
-	          " ",
-	          "$" + subtotal.toFixed(2)
-	        )
-	      ),
-	      React.createElement(
-	        "a",
-	        { className: "checkout__button" },
-	        React.createElement("img", { className: "checkout__button__icon", src: "img/cart-icon.svg" }),
-	        React.createElement(
-	          "div",
-	          { className: "checkout__button__label" },
-	          "Checkout"
-	        )
-	      )
-	    );
+	    return React.createElement("div", { className: "checkout" }, React.createElement("hr", { className: "checkout__divider" }), React.createElement("input", { type: "text", className: "checkout__coupon-input", placeholder: "coupon code" }), React.createElement("div", { className: "checkout__line" }, React.createElement("div", { className: "checkout__line__label" }, "Subtotal"), React.createElement("div", { className: "checkout__line__amount" }, " ", "$" + subtotal.toFixed(2))), React.createElement("a", { className: "checkout__button" }, React.createElement("img", { className: "checkout__button__icon", src: "img/cart-icon.svg" }), React.createElement("div", { className: "checkout__button__label" }, "Checkout")));
 	  }
 	});
 	
 	module.exports = Checkout;
-
-/***/ },
-/* 190 */
-/*!*************************************************!*\
-  !*** ./js/components/MakeConnectedComponent.js ***!
-  \*************************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var React = __webpack_require__(/*! react */ 1);
-	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 167);
-	
-	function MakeConnectedComponent(ViewComponent, store) {
-	  for (var _len = arguments.length, propNames = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-	    propNames[_key - 2] = arguments[_key];
-	  }
-	
-	  // Note: The argument "ViewComponent" must be uppercase. Why?
-	
-	  // TODO: Define ConnectedViewComponent
-	
-	  var ConnectedViewComponent = (function (_React$Component) {
-	    _inherits(ConnectedViewComponent, _React$Component);
-	
-	    function ConnectedViewComponent() {
-	      _classCallCheck(this, ConnectedViewComponent);
-	
-	      _get(Object.getPrototypeOf(ConnectedViewComponent.prototype), "constructor", this).apply(this, arguments);
-	    }
-	
-	    _createClass(ConnectedViewComponent, [{
-	      key: "render",
-	      value: function render() {
-	        var _this = this;
-	
-	        return React.createElement(
-	          ConnectedStore,
-	          { store: store, propNames: propNames },
-	          function (prop) {
-	            return React.createElement(ViewComponent, _extends({}, prop, _this.props));
-	          }
-	        );
-	      }
-	    }]);
-	
-	    return ConnectedViewComponent;
-	  })(React.Component);
-	
-	  ;
-	
-	  // Return the component
-	  return ConnectedViewComponent;
-	}
-	
-	module.exports = MakeConnectedComponent;
 
 /***/ }
 /******/ ]);

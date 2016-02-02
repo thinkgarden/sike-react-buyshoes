@@ -5,6 +5,7 @@ function MakeConnectedComponent(ViewComponent,store,...propNames) {
   // Note: The argument "ViewComponent" must be uppercase. Why?
 
   // TODO: Define ConnectedViewComponent
+  //  {...this.props}为了兼容嵌套的使用
   class ConnectedViewComponent extends React.Component {
     render(){
       return(
