@@ -1,5 +1,5 @@
 const React = require("react");
-const {products} = require("../data.js");
+const ProductsStore = require("../stores/ProductsStore");
 const CartStore = require("../stores/CartStore");
 const {removeCartItem} = CartStore;
 const QuantityControl = require("./QuantityControl");
@@ -11,7 +11,7 @@ let CartItem = React.createClass({
   render() {
     let {item} = this.props;
     let {id,quantity} = this.props.item;
-
+    let products = ProductsStore.products();
     return (
       <div className="cart-item">
         <div className="cart-item__top-part">

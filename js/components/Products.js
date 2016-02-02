@@ -22,22 +22,6 @@ let Products = React.createClass({
     );
   }
 });
-
-// let ConnectedProducts = React.createClass({
-//   render() {
-//     return (
-//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
-//         {propsOfCartStore => {
-//           return (
-//             <ConnectedStore store={LikedStore} propNames={["likedItems"]} >
-//               {propsOfLikeStore => <Products {...propsOfLikeStore} {...propsOfCartStore}/>}
-//             </ConnectedStore>
-//           )
-//         }}
-//       </ConnectedStore>
-//     );
-//   }
-// });
 @connect(ProductsStore,"filteredProducts")
 @connect(LikedStore,"likedItems")
 @connect(CartStore,"cartItems")

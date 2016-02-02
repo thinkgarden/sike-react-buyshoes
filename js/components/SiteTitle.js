@@ -1,4 +1,5 @@
 const React = require('react');
+const connect = require("./connect");
 const ProductsStore = require("../stores/ProductsStore");
 let SiteTitle = React.createClass({
   filterLike() {
@@ -9,10 +10,15 @@ let SiteTitle = React.createClass({
     return (
       <div className="title">
       <h2>Buy Some Shoes</h2>
-      <img className="product__heart" src={ showOnlyLike ? 'img/heart-liked.svg' : 'img/heart.svg'} onClick={this.filterLike.bind(this)}/>
+      <img className="product__heart" src={ showOnlyLike ? 'img/heart-liked.svg' : 'img/heart.svg'} onClick={this.filterLike}/>
       </div>
     );
   }
 });
 
-module.exports = SiteTitle;
+@connect(ProductsStore,"filteredProducts")
+class ConnectedSiteTitle extends SiteTitle {}
+
+module.exports = ConnectedSiteTitle;
+
+

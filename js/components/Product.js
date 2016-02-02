@@ -32,7 +32,7 @@ let Product = React.createClass({
           {(cartItems[id])? (
             <QuantityControl item={cartItems[id]} variant="gray"/>
           ): (
-          <div class="product__control">
+          <div className="product__control">
             <a className="product__add" onClick={this.onClick.bind(this,id)}>
               <img className="product__add__icon" src={"img/cart-icon.svg"}/>
             </a>

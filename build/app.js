@@ -18702,7 +18702,40 @@
 
 	"use strict";
 	
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;_function: while (_again) {
+	    var object = _x,
+	        property = _x2,
+	        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;if (getter === undefined) {
+	        return undefined;
+	      }return getter.call(receiver);
+	    }
+	  }
+	};
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
 	var React = __webpack_require__(/*! react */ 1);
+	var connect = __webpack_require__(/*! ./connect */ 166);
 	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
 	var SiteTitle = React.createClass({
 	  displayName: "SiteTitle",
@@ -18712,11 +18745,25 @@
 	  },
 	  render: function render() {
 	    var showOnlyLike = ProductsStore.isShowOnlyLike();
-	    return React.createElement("div", { className: "title" }, React.createElement("h2", null, "Buy Some Shoes"), React.createElement("img", { className: "product__heart", src: showOnlyLike ? 'img/heart-liked.svg' : 'img/heart.svg', onClick: this.filterLike.bind(this) }));
+	    return React.createElement("div", { className: "title" }, React.createElement("h2", null, "Buy Some Shoes"), React.createElement("img", { className: "product__heart", src: showOnlyLike ? 'img/heart-liked.svg' : 'img/heart.svg', onClick: this.filterLike }));
 	  }
 	});
 	
-	module.exports = SiteTitle;
+	var ConnectedSiteTitle = (function (_SiteTitle) {
+	  _inherits(ConnectedSiteTitle, _SiteTitle);
+	
+	  function ConnectedSiteTitle() {
+	    _classCallCheck(this, _ConnectedSiteTitle);
+	
+	    _get(Object.getPrototypeOf(_ConnectedSiteTitle.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  var _ConnectedSiteTitle = ConnectedSiteTitle;
+	  ConnectedSiteTitle = connect(ProductsStore, "filteredProducts")(ConnectedSiteTitle) || ConnectedSiteTitle;
+	  return ConnectedSiteTitle;
+	})(SiteTitle);
+	
+	module.exports = ConnectedSiteTitle;
 
 /***/ },
 /* 159 */
@@ -18784,22 +18831,6 @@
 	  }
 	});
 	
-	// let ConnectedProducts = React.createClass({
-	//   render() {
-	//     return (
-	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
-	//         {propsOfCartStore => {
-	//           return (
-	//             <ConnectedStore store={LikedStore} propNames={["likedItems"]} >
-	//               {propsOfLikeStore => <Products {...propsOfLikeStore} {...propsOfCartStore}/>}
-	//             </ConnectedStore>
-	//           )
-	//         }}
-	//       </ConnectedStore>
-	//     );
-	//   }
-	// });
-	
 	var ConnectedProducts = (function (_Products) {
 	  _inherits(ConnectedProducts, _Products);
 	
@@ -18859,7 +18890,7 @@
 	    var price = _props$product.price;
 	    var imagePath = _props$product.imagePath;
 	
-	    return React.createElement("div", { className: "product" }, React.createElement("div", { className: "product__display" }, React.createElement("div", { className: "product__img-wrapper" }, React.createElement("img", { className: "product__img", src: imagePath })), cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement("div", { "class": "product__control" }, React.createElement("a", { className: "product__add", onClick: this.onClick.bind(this, id) }, React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" }))), React.createElement("div", { className: "product__price" }, "$" + price)), React.createElement("div", { className: "product__description" }, React.createElement("div", { className: "product__name" }, name), likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })));
+	    return React.createElement("div", { className: "product" }, React.createElement("div", { className: "product__display" }, React.createElement("div", { className: "product__img-wrapper" }, React.createElement("img", { className: "product__img", src: imagePath })), cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement("div", { className: "product__control" }, React.createElement("a", { className: "product__add", onClick: this.onClick.bind(this, id) }, React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" }))), React.createElement("div", { className: "product__price" }, "$" + price)), React.createElement("div", { className: "product__description" }, React.createElement("div", { className: "product__name" }, name), likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })));
 	  }
 	});
 	
@@ -19642,7 +19673,6 @@
 	    // Return all products or only liked products, depending on _showOnlyLike
 	    if (_showOnlyLike) {
 	      var likedItems = LikedStore.likedItems();
-	      console.log(likedItems);
 	      return likedItems;
 	    } else {
 	      return _products;
@@ -19676,8 +19706,40 @@
 
 	"use strict";
 	
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;_function: while (_again) {
+	    var object = _x,
+	        property = _x2,
+	        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;if (getter === undefined) {
+	        return undefined;
+	      }return getter.call(receiver);
+	    }
+	  }
+	};
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
 	var React = __webpack_require__(/*! react */ 1);
-	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 167);
+	var connect = __webpack_require__(/*! ./connect */ 166);
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
 	var CartItem = __webpack_require__(/*! ./CartItem */ 171);
 	var Ps = __webpack_require__(/*! perfect-scrollbar */ 172);
@@ -19687,12 +19749,9 @@
 	  componentDidMount: function componentDidMount() {
 	    var $perfectScroll = React.findDOMNode(this.refs.perfectScroll);
 	    Ps.initialize($perfectScroll);
-	    // let store = this.props.store;
-	    // store.addChangeListener(this.forceUpdate.bind(this));
 	  },
 	
 	  render: function render() {
-	    // let cartItems = CartStore.getCartItems();
 	    var cartItems = this.props.cartItems;
 	
 	    return React.createElement("div", { className: "cart" }, React.createElement("h3", { className: "cart__title" }, "Shopping Cart"), React.createElement("div", { className: "cart__content", ref: "perfectScroll" }, React.createElement("h3", { className: "cart__title cart__title--spacer" }, "Shopping Cart"), Object.keys(cartItems).map(function (item, index) {
@@ -19701,17 +19760,21 @@
 	  }
 	});
 	
-	// let ConnectedCart = React.createClass({
-	//   render() {
-	//     return (
-	//       <ConnectedStore store={CartStore} propNames={["cartItems"]}>
-	//         {propValues => <Cart {...propValues}/>}
-	//       </ConnectedStore>
-	//     );
-	//   }
-	// });
+	var ConnectedCart = (function (_Cart) {
+	  _inherits(ConnectedCart, _Cart);
 	
-	module.exports = MakeConnectedComponent(Cart, CartStore, "cartItems");
+	  function ConnectedCart() {
+	    _classCallCheck(this, _ConnectedCart);
+	
+	    _get(Object.getPrototypeOf(_ConnectedCart.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  var _ConnectedCart = ConnectedCart;
+	  ConnectedCart = connect(CartStore, "cartItems")(ConnectedCart) || ConnectedCart;
+	  return ConnectedCart;
+	})(Cart);
+	
+	module.exports = ConnectedCart;
 
 /***/ },
 /* 171 */
@@ -19723,11 +19786,7 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
-	
-	var _require = __webpack_require__(/*! ../data.js */ 163);
-	
-	var products = _require.products;
-	
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
 	var removeCartItem = CartStore.removeCartItem;
 	
@@ -19745,6 +19804,7 @@
 	    var id = _props$item.id;
 	    var quantity = _props$item.quantity;
 	
+	    var products = ProductsStore.products();
 	    return React.createElement("div", { className: "cart-item" }, React.createElement("div", { className: "cart-item__top-part" }, React.createElement("div", { className: "cart-item__image" }, React.createElement("img", { src: products[id].imagePath })), React.createElement("div", { className: "cart-item__top-part__middle" }, React.createElement("div", { className: "cart-item__title" }, id), React.createElement("div", { className: "cart-item__price" }, "$" + products[id].price + (quantity > 1 ? " × " + quantity : ""))), React.createElement("img", { className: "cart-item__trash", onClick: removeCartItem.bind(this, id), src: "img/trash-icon.svg" })), React.createElement("div", { className: "cart-item__qty" }, React.createElement(QuantityControl, { item: item, variant: "gray" })));
 	  }
 	});
@@ -21294,21 +21354,50 @@
 
 	"use strict";
 	
+	var _get = function get(_x, _x2, _x3) {
+	  var _again = true;_function: while (_again) {
+	    var object = _x,
+	        property = _x2,
+	        receiver = _x3;_again = false;if (object === null) object = Function.prototype;var desc = Object.getOwnPropertyDescriptor(object, property);if (desc === undefined) {
+	      var parent = Object.getPrototypeOf(object);if (parent === null) {
+	        return undefined;
+	      } else {
+	        _x = parent;_x2 = property;_x3 = receiver;_again = true;desc = parent = undefined;continue _function;
+	      }
+	    } else if ("value" in desc) {
+	      return desc.value;
+	    } else {
+	      var getter = desc.get;if (getter === undefined) {
+	        return undefined;
+	      }return getter.call(receiver);
+	    }
+	  }
+	};
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
+	  }subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass;
+	}
+	
 	var React = __webpack_require__(/*! react */ 1);
-	
-	var _require = __webpack_require__(/*! ../data.js */ 163);
-	
-	var products = _require.products;
-	
+	var connect = __webpack_require__(/*! ./connect */ 166);
 	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
 	var Checkout = React.createClass({
 	  displayName: "Checkout",
 	
-	  componentDidMount: function componentDidMount() {
-	    CartStore.addChangeListener(this.forceUpdate.bind(this));
-	  },
 	  render: function render() {
-	    var cartItems = CartStore.cartItems();
+	    var _props = this.props;
+	    var cartItems = _props.cartItems;
+	    var products = _props.products;
+	
 	    var subtotal = 0;
 	    Object.keys(cartItems).forEach(function (key) {
 	      var quantity = cartItems[key].quantity;
@@ -21320,7 +21409,22 @@
 	  }
 	});
 	
-	module.exports = Checkout;
+	var ConnectedCheckout = (function (_Checkout) {
+	  _inherits(ConnectedCheckout, _Checkout);
+	
+	  function ConnectedCheckout() {
+	    _classCallCheck(this, _ConnectedCheckout);
+	
+	    _get(Object.getPrototypeOf(_ConnectedCheckout.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  var _ConnectedCheckout = ConnectedCheckout;
+	  ConnectedCheckout = connect(ProductsStore, "products")(ConnectedCheckout) || ConnectedCheckout;
+	  ConnectedCheckout = connect(CartStore, "cartItems")(ConnectedCheckout) || ConnectedCheckout;
+	  return ConnectedCheckout;
+	})(Checkout);
+	
+	module.exports = ConnectedCheckout;
 
 /***/ }
 /******/ ]);

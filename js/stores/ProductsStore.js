@@ -84,7 +84,6 @@ module.exports = {
       // Return all products or only liked products, depending on _showOnlyLike
       if(_showOnlyLike) {
         let likedItems = LikedStore.likedItems();
-        console.log(likedItems);
         return likedItems;
       } else{
         return _products;
