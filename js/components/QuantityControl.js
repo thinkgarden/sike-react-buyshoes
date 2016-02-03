@@ -1,6 +1,6 @@
 const React = require("react");
-const CartStore = require("../stores/CartStore");
-const {updateCartItemQuantity} = CartStore;
+const action = require("../action");
+const {updateCartItemQuantity} = action;
 let QuantityControl = React.createClass({
   onClick(productId, quantity) {
     if (quantity > 0) {

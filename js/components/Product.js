@@ -1,12 +1,13 @@
 const React = require('react');
 const QuantityControl = require("./QuantityControl");
-const CartStore = require("../stores/CartStore");
-const {addCartItem} = CartStore;
 const LikedStore = require("../stores/LikedStore");
+const {addCartItem} = require("../action");
+// const {addCartItem} = action;
 
 let Product = React.createClass({
 
   onClick(productId) {
+    console.log(productId);
     addCartItem(productId);
   },
   heartClick(productId) {

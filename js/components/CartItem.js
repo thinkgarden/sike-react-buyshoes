@@ -1,7 +1,7 @@
 const React = require("react");
 const ProductsStore = require("../stores/ProductsStore");
 const CartStore = require("../stores/CartStore");
-const {removeCartItem} = CartStore;
+const {removeCartItem} = require("../action");
 const QuantityControl = require("./QuantityControl");
 
 let CartItem = React.createClass({

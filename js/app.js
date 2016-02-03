@@ -1,8 +1,10 @@
 const React = require("react");
-const App = require("./components/App.js");
+const enableLogging = require("./LoggingService");
+const App = require("./components/App");
 
 window.onload = () => {
   // Replace innerHTML of `#root` with the App component.
+  enableLogging();
   React.render(<App/>,document.querySelector("#root"));
   console.log("page loaded");
 }

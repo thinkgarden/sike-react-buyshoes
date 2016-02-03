@@ -50,10 +50,12 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var App = __webpack_require__(/*! ./components/App.js */ 157);
+	var enableLogging = __webpack_require__(/*! ./LoggingService */ 195);
+	var App = __webpack_require__(/*! ./components/App */ 157);
 	
 	window.onload = function () {
 	  // Replace innerHTML of `#root` with the App component.
+	  enableLogging();
 	  React.render(React.createElement(App, null), document.querySelector("#root"));
 	  console.log("page loaded");
 	};
@@ -18676,7 +18678,7 @@
 	
 	var React = __webpack_require__(/*! react */ 1);
 	var SiteTitle = __webpack_require__(/*! ./SiteTitle */ 158);
-	var Products = __webpack_require__(/*! ./Products */ 159);
+	var Products = __webpack_require__(/*! ./Products */ 166);
 	var Cart = __webpack_require__(/*! ./Cart */ 170);
 	var Checkout = __webpack_require__(/*! ./Checkout */ 192);
 	
@@ -18735,8 +18737,8 @@
 	}
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var connect = __webpack_require__(/*! ./connect */ 166);
-	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
+	var connect = __webpack_require__(/*! ./connect */ 159);
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 162);
 	var SiteTitle = React.createClass({
 	  displayName: "SiteTitle",
 	
@@ -18767,12 +18769,58 @@
 
 /***/ },
 /* 159 */
-/*!***********************************!*\
-  !*** ./js/components/Products.js ***!
-  \***********************************/
+/*!**********************************!*\
+  !*** ./js/components/connect.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
+	
+	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 160);
+	
+	function connect(store) {
+	    for (var _len = arguments.length, cartItems = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        cartItems[_key - 1] = arguments[_key];
+	    }
+	
+	    return function (klass) {
+	
+	        var klassReplacement = MakeConnectedComponent(klass, store, cartItems);
+	
+	        return klassReplacement;
+	    };
+	}
+	
+	module.exports = connect;
+
+/***/ },
+/* 160 */
+/*!*************************************************!*\
+  !*** ./js/components/MakeConnectedComponent.js ***!
+  \*************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _extends = Object.assign || function (target) {
+	  for (var i = 1; i < arguments.length; i++) {
+	    var source = arguments[i];for (var key in source) {
+	      if (Object.prototype.hasOwnProperty.call(source, key)) {
+	        target[key] = source[key];
+	      }
+	    }
+	  }return target;
+	};
+	
+	var _createClass = (function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	})();
 	
 	var _get = function get(_x, _x2, _x3) {
 	  var _again = true;_function: while (_again) {
@@ -18807,182 +18855,193 @@
 	}
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var Product = __webpack_require__(/*! ./Product.js */ 160);
-	var connect = __webpack_require__(/*! ./connect */ 166);
-	// const MakeConnectedComponent = require("./MakeConnectedComponent");
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
-	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
-	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
+	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 161);
 	
-	var Products = React.createClass({
-	  displayName: "Products",
-	
-	  render: function render() {
-	    var _props = this.props;
-	    var filteredProducts = _props.filteredProducts;
-	    var cartItems = _props.cartItems;
-	    var likedItems = _props.likedItems;
-	
-	    var productNode = Object.keys(filteredProducts).map(function (item, index) {
-	      // console.log(product,index);
-	      return React.createElement(Product, { key: index, product: filteredProducts[item], cartItems: cartItems, likedItems: likedItems });
-	    });
-	    return React.createElement("div", { className: "products" }, productNode);
-	  }
-	});
-	
-	var ConnectedProducts = (function (_Products) {
-	  _inherits(ConnectedProducts, _Products);
-	
-	  function ConnectedProducts() {
-	    _classCallCheck(this, _ConnectedProducts);
-	
-	    _get(Object.getPrototypeOf(_ConnectedProducts.prototype), "constructor", this).apply(this, arguments);
+	function MakeConnectedComponent(ViewComponent, store) {
+	  for (var _len = arguments.length, propNames = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+	    propNames[_key - 2] = arguments[_key];
 	  }
 	
-	  var _ConnectedProducts = ConnectedProducts;
-	  ConnectedProducts = connect(CartStore, "cartItems")(ConnectedProducts) || ConnectedProducts;
-	  ConnectedProducts = connect(LikedStore, "likedItems")(ConnectedProducts) || ConnectedProducts;
-	  ConnectedProducts = connect(ProductsStore, "filteredProducts")(ConnectedProducts) || ConnectedProducts;
-	  return ConnectedProducts;
-	})(Products);
+	  // Note: The argument "ViewComponent" must be uppercase. Why?
 	
-	module.exports = ConnectedProducts;
-
-/***/ },
-/* 160 */
-/*!**********************************!*\
-  !*** ./js/components/Product.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
+	  // TODO: Define ConnectedViewComponent
+	  //  {...this.props}为了兼容嵌套的使用
 	
-	var React = __webpack_require__(/*! react */ 1);
-	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 161);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
-	var addCartItem = CartStore.addCartItem;
+	  var ConnectedViewComponent = (function (_React$Component) {
+	    _inherits(ConnectedViewComponent, _React$Component);
 	
-	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
+	    function ConnectedViewComponent() {
+	      _classCallCheck(this, ConnectedViewComponent);
 	
-	var Product = React.createClass({
-	  displayName: "Product",
-	
-	  onClick: function onClick(productId) {
-	    addCartItem(productId);
-	  },
-	  heartClick: function heartClick(productId) {
-	    var likedItems = this.props.likedItems;
-	
-	    if (!likedItems[productId]) {
-	      LikedStore.addLikedItem(productId);
-	    } else {
-	      LikedStore.removeLikedItem(productId);
+	      _get(Object.getPrototypeOf(ConnectedViewComponent.prototype), "constructor", this).apply(this, arguments);
 	    }
-	  },
-	  render: function render() {
-	    var _props = this.props;
-	    var cartItems = _props.cartItems;
-	    var likedItems = _props.likedItems;
-	    var _props$product = this.props.product;
-	    var id = _props$product.id;
-	    var name = _props$product.name;
-	    var price = _props$product.price;
-	    var imagePath = _props$product.imagePath;
 	
-	    return React.createElement("div", { className: "product" }, React.createElement("div", { className: "product__display" }, React.createElement("div", { className: "product__img-wrapper" }, React.createElement("img", { className: "product__img", src: imagePath })), cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement("div", { className: "product__control" }, React.createElement("a", { className: "product__add", onClick: this.onClick.bind(this, id) }, React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" }))), React.createElement("div", { className: "product__price" }, "$" + price)), React.createElement("div", { className: "product__description" }, React.createElement("div", { className: "product__name" }, name), likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })));
-	  }
-	});
+	    _createClass(ConnectedViewComponent, [{
+	      key: "render",
+	      value: function render() {
+	        var _this = this;
 	
-	module.exports = Product;
+	        return React.createElement(ConnectedStore, { store: store, propNames: propNames }, function (prop) {
+	          return React.createElement(ViewComponent, _extends({}, prop, _this.props));
+	        });
+	      }
+	    }]);
+	
+	    return ConnectedViewComponent;
+	  })(React.Component);
+	
+	  ;
+	
+	  // Return the component
+	  return ConnectedViewComponent;
+	}
+	
+	module.exports = MakeConnectedComponent;
 
 /***/ },
 /* 161 */
-/*!******************************************!*\
-  !*** ./js/components/QuantityControl.js ***!
-  \******************************************/
+/*!*****************************************!*\
+  !*** ./js/components/ConnectedStore.js ***!
+  \*****************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
-	var updateCartItemQuantity = CartStore.updateCartItemQuantity;
 	
-	var QuantityControl = React.createClass({
-	  displayName: "QuantityControl",
+	var ConnectedStore = React.createClass({
+	  displayName: 'ConnectedStore',
 	
-	  onClick: function onClick(productId, quantity) {
-	    if (quantity > 0) {
-	      updateCartItemQuantity(productId, quantity);
-	    }
+	  componentDidMount: function componentDidMount() {
+	    var store = this.props.store;
+	    store.addChangeListener(this.forceUpdate.bind(this));
 	  },
 	  render: function render() {
-	    var _props$item = this.props.item;
-	    var id = _props$item.id;
-	    var quantity = _props$item.quantity;
+	    // The `children` property is a function.
+	    var contentRenderFunction = this.props.children;
+	    var storeProps = {};
+	    var _props = this.props;
+	    var store = _props.store;
+	    var propNames = _props.propNames;
 	
-	    var variant = this.props.variant;
-	    return React.createElement("div", { className: "product__control" }, React.createElement("div", { className: "adjust-qty" + (variant ? " adjust-qty--" + variant : "") }, React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity - 1) }, "-"), React.createElement("div", { className: "adjust-qty__number" }, quantity), React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity + 1) }, "+")));
+	    propNames.forEach(function (name) {
+	      storeProps[name] = store[name]();
+	    });
+	    return contentRenderFunction(storeProps);
 	  }
 	});
-	module.exports = QuantityControl;
+	
+	module.exports = ConnectedStore;
 
 /***/ },
 /* 162 */
-/*!********************************!*\
-  !*** ./js/stores/CartStore.js ***!
-  \********************************/
+/*!************************************!*\
+  !*** ./js/stores/ProductsStore.js ***!
+  \************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var _require = __webpack_require__(/*! ../data.js */ 163);
-	
-	var products = _require.products;
-	
-	var EventEmitter = __webpack_require__(/*! events */ 164);
+	var EventEmitter = __webpack_require__(/*! events */ 163);
 	var emitter = new EventEmitter();
+	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 164);
+	
+	var _products = {
+	  "jameson-vulc": {
+	    id: "jameson-vulc",
+	    name: "Jameson Vulc",
+	    price: 64.99,
+	    imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
+	    gender: "man"
+	  },
+	
+	  "marana-x-hook-ups": {
+	    id: "marana-x-hook-ups",
+	    name: "Marana X Hook-Up",
+	    price: 79.99,
+	    imagePath: "img/shoes/marana-x-hook-ups-black-orig.png",
+	    gender: "man"
+	  },
+	
+	  "jameson-e-lite": {
+	    id: "jameson-e-lite",
+	    name: "Jameson E-Lite",
+	    price: 69.99,
+	    imagePath: "img/shoes/jameson-e-lite-maroon-orig.png",
+	    gender: "man"
+	  },
+	
+	  "jameson-e-lite-julian-davidson-4": {
+	    id: "jameson-e-lite-julian-davidson-4",
+	    name: "Jameson E-Lite Julian Davidson",
+	    price: 74.99,
+	    imagePath: "img/shoes/jameson-e-lite-julian-davidson-4-black-gum-orig.png",
+	    gender: "man"
+	  },
+	
+	  "scout-womens-6": {
+	    id: "scout-womens-6",
+	    name: "Scout Women's",
+	    imagePath: "img/shoes/scout-womens-6-teal-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "scout-womens-coco-ho-5": {
+	    id: "scout-womens-coco-ho-5",
+	    name: "Scout Women's Coco Ho",
+	    imagePath: "img/shoes/scout-womens-coco-ho-5-olive-white-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "jameson-2-womens-8": {
+	    id: "jameson-2-womens-8",
+	    name: "Jameson 2 Women's",
+	    imagePath: "img/shoes/jameson-2-womens-8-black-white-gum-orig.png",
+	    price: 59.99,
+	    gender: "woman"
+	  },
+	
+	  "corby-womens-2": {
+	    id: "corby-womens-2",
+	    name: "Corby Women's",
+	    imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
+	    price: 44.99,
+	    gender: "woman"
+	  }
+	};
+	
+	var _showOnlyLike = false;
 	
 	function emitChange() {
 	  emitter.emit("change");
 	}
 	
-	var _cartItems = {};
-	
 	module.exports = {
-	
-	  // Reader methods
-	  cartItems: function cartItems() {
-	    return _cartItems;
+	  // Readers
+	  products: function products() {
+	    return _products;
 	  },
 	
-	  // Writer methods. These are the "actions".
-	  addCartItem: function addCartItem(productId) {
-	    if (!_cartItems[productId]) {
-	      _cartItems[productId] = {
-	        id: productId,
-	        quantity: 1
-	      };
+	  filteredProducts: function filteredProducts() {
+	    // Return all products or only liked products, depending on _showOnlyLike
+	    if (_showOnlyLike) {
+	      var likedItems = LikedStore.likedItems();
+	      return likedItems;
 	    } else {
-	      _cartItems[productId][quantity] += 1;
+	      return _products;
 	    }
-	    emitChange();
 	  },
 	
-	  removeCartItem: function removeCartItem(productId) {
-	    delete _cartItems[productId];
+	  // Actions
+	  toggleShowOnlyLike: function toggleShowOnlyLike() {
+	    _showOnlyLike = !_showOnlyLike;
 	    emitChange();
 	  },
-	
-	  updateCartItemQuantity: function updateCartItemQuantity(productId, quantity) {
-	    _cartItems[productId] = {
-	      id: productId,
-	      quantity: quantity
-	    };
-	    emitChange();
+	  isShowOnlyLike: function isShowOnlyLike() {
+	    return _showOnlyLike;
 	  },
-	
 	  addChangeListener: function addChangeListener(callback) {
 	    emitter.addListener("change", callback);
 	  },
@@ -18990,113 +19049,11 @@
 	  removeChangeListener: function removeChangeListener(callback) {
 	    emitter.removeListener("change", callback);
 	  }
+	
 	};
 
 /***/ },
 /* 163 */
-/*!********************!*\
-  !*** ./js/data.js ***!
-  \********************/
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	  cartItems: {
-	    "jameson-vulc": {
-	      id: "jameson-vulc",
-	      quantity: 1
-	    },
-	
-	    "marana-x-hook-ups": {
-	      id: "marana-x-hook-ups",
-	      quantity: 2
-	    },
-	
-	    "scout-womens-6": {
-	      id: "scout-womens-6",
-	      quantity: 2
-	    },
-	
-	    "scout-womens-coco-ho-5": {
-	      id: "scout-womens-coco-ho-5",
-	      quantity: 1
-	    },
-	
-	    "jameson-2-womens-8": {
-	      id: "jameson-2-womens-8",
-	      quantity: 1
-	    }
-	  },
-	  products: {
-	    "jameson-vulc": {
-	      id: "jameson-vulc",
-	      name: "Jameson Vulc",
-	      price: 64.99,
-	      imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
-	      gender: "man"
-	    },
-	
-	    "marana-x-hook-ups": {
-	      id: "marana-x-hook-ups",
-	      name: "Marana X Hook-Up",
-	      price: 79.99,
-	      imagePath: "img/shoes/marana-x-hook-ups-black-orig.png",
-	      gender: "man"
-	    },
-	
-	    "jameson-e-lite": {
-	      id: "jameson-e-lite",
-	      name: "Jameson E-Lite",
-	      price: 69.99,
-	      imagePath: "img/shoes/jameson-e-lite-maroon-orig.png",
-	      gender: "man"
-	    },
-	
-	    "jameson-e-lite-julian-davidson-4": {
-	      id: "jameson-e-lite-julian-davidson-4",
-	      name: "Jameson E-Lite Julian Davidson",
-	      price: 74.99,
-	      imagePath: "img/shoes/jameson-e-lite-julian-davidson-4-black-gum-orig.png",
-	      gender: "man"
-	    },
-	
-	    "scout-womens-6": {
-	      id: "scout-womens-6",
-	      name: "Scout Women's",
-	      imagePath: "img/shoes/scout-womens-6-teal-orig.png",
-	      price: 59.99,
-	      gender: "woman"
-	    },
-	
-	    "scout-womens-coco-ho-5": {
-	      id: "scout-womens-coco-ho-5",
-	      name: "Scout Women's Coco Ho",
-	      imagePath: "img/shoes/scout-womens-coco-ho-5-olive-white-orig.png",
-	      price: 59.99,
-	      gender: "woman"
-	    },
-	
-	    "jameson-2-womens-8": {
-	      id: "jameson-2-womens-8",
-	      name: "Jameson 2 Women's",
-	      imagePath: "img/shoes/jameson-2-womens-8-black-white-gum-orig.png",
-	      price: 59.99,
-	      gender: "woman"
-	    },
-	
-	    "corby-womens-2": {
-	      id: "corby-womens-2",
-	      name: "Corby Women's",
-	      imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
-	      price: 44.99,
-	      gender: "woman"
-	    }
-	  }
-	};
-
-/***/ },
-/* 164 */
 /*!****************************!*\
   !*** ./~/events/events.js ***!
   \****************************/
@@ -19367,7 +19324,7 @@
 	}
 
 /***/ },
-/* 165 */
+/* 164 */
 /*!*********************************!*\
   !*** ./js/stores/LikedStore.js ***!
   \*********************************/
@@ -19375,11 +19332,11 @@
 
 	"use strict";
 	
-	var _require = __webpack_require__(/*! ../data */ 163);
+	var _require = __webpack_require__(/*! ../data */ 165);
 	
 	var products = _require.products;
 	
-	var EventEmitter = __webpack_require__(/*! events */ 164);
+	var EventEmitter = __webpack_require__(/*! events */ 163);
 	var emitter = new EventEmitter();
 	
 	function emitChange() {
@@ -19413,59 +19370,116 @@
 	};
 
 /***/ },
-/* 166 */
-/*!**********************************!*\
-  !*** ./js/components/connect.js ***!
-  \**********************************/
-/***/ function(module, exports, __webpack_require__) {
+/* 165 */
+/*!********************!*\
+  !*** ./js/data.js ***!
+  \********************/
+/***/ function(module, exports) {
 
 	"use strict";
 	
-	var MakeConnectedComponent = __webpack_require__(/*! ./MakeConnectedComponent */ 167);
+	module.exports = {
+	  cartItems: {
+	    "jameson-vulc": {
+	      id: "jameson-vulc",
+	      quantity: 1
+	    },
 	
-	function connect(store) {
-	    for (var _len = arguments.length, cartItems = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        cartItems[_key - 1] = arguments[_key];
+	    "marana-x-hook-ups": {
+	      id: "marana-x-hook-ups",
+	      quantity: 2
+	    },
+	
+	    "scout-womens-6": {
+	      id: "scout-womens-6",
+	      quantity: 2
+	    },
+	
+	    "scout-womens-coco-ho-5": {
+	      id: "scout-womens-coco-ho-5",
+	      quantity: 1
+	    },
+	
+	    "jameson-2-womens-8": {
+	      id: "jameson-2-womens-8",
+	      quantity: 1
 	    }
+	  },
+	  products: {
+	    "jameson-vulc": {
+	      id: "jameson-vulc",
+	      name: "Jameson Vulc",
+	      price: 64.99,
+	      imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
+	      gender: "man"
+	    },
 	
-	    return function (klass) {
+	    "marana-x-hook-ups": {
+	      id: "marana-x-hook-ups",
+	      name: "Marana X Hook-Up",
+	      price: 79.99,
+	      imagePath: "img/shoes/marana-x-hook-ups-black-orig.png",
+	      gender: "man"
+	    },
 	
-	        var klassReplacement = MakeConnectedComponent(klass, store, cartItems);
+	    "jameson-e-lite": {
+	      id: "jameson-e-lite",
+	      name: "Jameson E-Lite",
+	      price: 69.99,
+	      imagePath: "img/shoes/jameson-e-lite-maroon-orig.png",
+	      gender: "man"
+	    },
 	
-	        return klassReplacement;
-	    };
-	}
+	    "jameson-e-lite-julian-davidson-4": {
+	      id: "jameson-e-lite-julian-davidson-4",
+	      name: "Jameson E-Lite Julian Davidson",
+	      price: 74.99,
+	      imagePath: "img/shoes/jameson-e-lite-julian-davidson-4-black-gum-orig.png",
+	      gender: "man"
+	    },
 	
-	module.exports = connect;
+	    "scout-womens-6": {
+	      id: "scout-womens-6",
+	      name: "Scout Women's",
+	      imagePath: "img/shoes/scout-womens-6-teal-orig.png",
+	      price: 59.99,
+	      gender: "woman"
+	    },
+	
+	    "scout-womens-coco-ho-5": {
+	      id: "scout-womens-coco-ho-5",
+	      name: "Scout Women's Coco Ho",
+	      imagePath: "img/shoes/scout-womens-coco-ho-5-olive-white-orig.png",
+	      price: 59.99,
+	      gender: "woman"
+	    },
+	
+	    "jameson-2-womens-8": {
+	      id: "jameson-2-womens-8",
+	      name: "Jameson 2 Women's",
+	      imagePath: "img/shoes/jameson-2-womens-8-black-white-gum-orig.png",
+	      price: 59.99,
+	      gender: "woman"
+	    },
+	
+	    "corby-womens-2": {
+	      id: "corby-womens-2",
+	      name: "Corby Women's",
+	      imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
+	      price: 44.99,
+	      gender: "woman"
+	    }
+	  }
+	};
 
 /***/ },
-/* 167 */
-/*!*************************************************!*\
-  !*** ./js/components/MakeConnectedComponent.js ***!
-  \*************************************************/
+/* 166 */
+/*!***********************************!*\
+  !*** ./js/components/Products.js ***!
+  \***********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	
-	var _extends = Object.assign || function (target) {
-	  for (var i = 1; i < arguments.length; i++) {
-	    var source = arguments[i];for (var key in source) {
-	      if (Object.prototype.hasOwnProperty.call(source, key)) {
-	        target[key] = source[key];
-	      }
-	    }
-	  }return target;
-	};
-	
-	var _createClass = (function () {
-	  function defineProperties(target, props) {
-	    for (var i = 0; i < props.length; i++) {
-	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-	    }
-	  }return function (Constructor, protoProps, staticProps) {
-	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-	  };
-	})();
 	
 	var _get = function get(_x, _x2, _x3) {
 	  var _again = true;_function: while (_again) {
@@ -19500,193 +19514,208 @@
 	}
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var ConnectedStore = __webpack_require__(/*! ./ConnectedStore */ 168);
+	var Product = __webpack_require__(/*! ./Product.js */ 167);
+	var connect = __webpack_require__(/*! ./connect */ 159);
+	// const MakeConnectedComponent = require("./MakeConnectedComponent");
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 169);
+	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 164);
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 162);
 	
-	function MakeConnectedComponent(ViewComponent, store) {
-	  for (var _len = arguments.length, propNames = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-	    propNames[_key - 2] = arguments[_key];
-	  }
+	var Products = React.createClass({
+	  displayName: "Products",
 	
-	  // Note: The argument "ViewComponent" must be uppercase. Why?
-	
-	  // TODO: Define ConnectedViewComponent
-	  //  {...this.props}为了兼容嵌套的使用
-	
-	  var ConnectedViewComponent = (function (_React$Component) {
-	    _inherits(ConnectedViewComponent, _React$Component);
-	
-	    function ConnectedViewComponent() {
-	      _classCallCheck(this, ConnectedViewComponent);
-	
-	      _get(Object.getPrototypeOf(ConnectedViewComponent.prototype), "constructor", this).apply(this, arguments);
-	    }
-	
-	    _createClass(ConnectedViewComponent, [{
-	      key: "render",
-	      value: function render() {
-	        var _this = this;
-	
-	        return React.createElement(ConnectedStore, { store: store, propNames: propNames }, function (prop) {
-	          return React.createElement(ViewComponent, _extends({}, prop, _this.props));
-	        });
-	      }
-	    }]);
-	
-	    return ConnectedViewComponent;
-	  })(React.Component);
-	
-	  ;
-	
-	  // Return the component
-	  return ConnectedViewComponent;
-	}
-	
-	module.exports = MakeConnectedComponent;
-
-/***/ },
-/* 168 */
-/*!*****************************************!*\
-  !*** ./js/components/ConnectedStore.js ***!
-  \*****************************************/
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var React = __webpack_require__(/*! react */ 1);
-	
-	var ConnectedStore = React.createClass({
-	  displayName: 'ConnectedStore',
-	
-	  componentDidMount: function componentDidMount() {
-	    var store = this.props.store;
-	    store.addChangeListener(this.forceUpdate.bind(this));
-	  },
 	  render: function render() {
-	    // The `children` property is a function.
-	    var contentRenderFunction = this.props.children;
-	    var storeProps = {};
 	    var _props = this.props;
-	    var store = _props.store;
-	    var propNames = _props.propNames;
+	    var filteredProducts = _props.filteredProducts;
+	    var cartItems = _props.cartItems;
+	    var likedItems = _props.likedItems;
 	
-	    propNames.forEach(function (name) {
-	      storeProps[name] = store[name]();
+	    var productNode = Object.keys(filteredProducts).map(function (item, index) {
+	      // console.log(product,index);
+	      return React.createElement(Product, { key: index, product: filteredProducts[item], cartItems: cartItems, likedItems: likedItems });
 	    });
-	    return contentRenderFunction(storeProps);
+	    return React.createElement("div", { className: "products" }, productNode);
 	  }
 	});
 	
-	module.exports = ConnectedStore;
+	var ConnectedProducts = (function (_Products) {
+	  _inherits(ConnectedProducts, _Products);
+	
+	  function ConnectedProducts() {
+	    _classCallCheck(this, _ConnectedProducts);
+	
+	    _get(Object.getPrototypeOf(_ConnectedProducts.prototype), "constructor", this).apply(this, arguments);
+	  }
+	
+	  var _ConnectedProducts = ConnectedProducts;
+	  ConnectedProducts = connect(CartStore, "cartItems")(ConnectedProducts) || ConnectedProducts;
+	  ConnectedProducts = connect(LikedStore, "likedItems")(ConnectedProducts) || ConnectedProducts;
+	  ConnectedProducts = connect(ProductsStore, "filteredProducts")(ConnectedProducts) || ConnectedProducts;
+	  return ConnectedProducts;
+	})(Products);
+	
+	module.exports = ConnectedProducts;
 
 /***/ },
-/* 169 */
-/*!************************************!*\
-  !*** ./js/stores/ProductsStore.js ***!
-  \************************************/
+/* 167 */
+/*!**********************************!*\
+  !*** ./js/components/Product.js ***!
+  \**********************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 	
-	var EventEmitter = __webpack_require__(/*! events */ 164);
-	var emitter = new EventEmitter();
-	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 165);
+	var React = __webpack_require__(/*! react */ 1);
+	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 168);
+	var LikedStore = __webpack_require__(/*! ../stores/LikedStore */ 164);
 	
-	var _products = {
-	  "jameson-vulc": {
-	    id: "jameson-vulc",
-	    name: "Jameson Vulc",
-	    price: 64.99,
-	    imagePath: "img/shoes/jameson-vulc-brown-gum-orig.png",
-	    gender: "man"
+	var _require = __webpack_require__(/*! ../action */ 193);
+	
+	var addCartItem = _require.addCartItem;
+	
+	// const {addCartItem} = action;
+	
+	var Product = React.createClass({
+	  displayName: "Product",
+	
+	  onClick: function onClick(productId) {
+	    console.log(productId);
+	    addCartItem(productId);
 	  },
+	  heartClick: function heartClick(productId) {
+	    var likedItems = this.props.likedItems;
 	
-	  "marana-x-hook-ups": {
-	    id: "marana-x-hook-ups",
-	    name: "Marana X Hook-Up",
-	    price: 79.99,
-	    imagePath: "img/shoes/marana-x-hook-ups-black-orig.png",
-	    gender: "man"
+	    if (!likedItems[productId]) {
+	      LikedStore.addLikedItem(productId);
+	    } else {
+	      LikedStore.removeLikedItem(productId);
+	    }
 	  },
+	  render: function render() {
+	    var _props = this.props;
+	    var cartItems = _props.cartItems;
+	    var likedItems = _props.likedItems;
+	    var _props$product = this.props.product;
+	    var id = _props$product.id;
+	    var name = _props$product.name;
+	    var price = _props$product.price;
+	    var imagePath = _props$product.imagePath;
 	
-	  "jameson-e-lite": {
-	    id: "jameson-e-lite",
-	    name: "Jameson E-Lite",
-	    price: 69.99,
-	    imagePath: "img/shoes/jameson-e-lite-maroon-orig.png",
-	    gender: "man"
-	  },
-	
-	  "jameson-e-lite-julian-davidson-4": {
-	    id: "jameson-e-lite-julian-davidson-4",
-	    name: "Jameson E-Lite Julian Davidson",
-	    price: 74.99,
-	    imagePath: "img/shoes/jameson-e-lite-julian-davidson-4-black-gum-orig.png",
-	    gender: "man"
-	  },
-	
-	  "scout-womens-6": {
-	    id: "scout-womens-6",
-	    name: "Scout Women's",
-	    imagePath: "img/shoes/scout-womens-6-teal-orig.png",
-	    price: 59.99,
-	    gender: "woman"
-	  },
-	
-	  "scout-womens-coco-ho-5": {
-	    id: "scout-womens-coco-ho-5",
-	    name: "Scout Women's Coco Ho",
-	    imagePath: "img/shoes/scout-womens-coco-ho-5-olive-white-orig.png",
-	    price: 59.99,
-	    gender: "woman"
-	  },
-	
-	  "jameson-2-womens-8": {
-	    id: "jameson-2-womens-8",
-	    name: "Jameson 2 Women's",
-	    imagePath: "img/shoes/jameson-2-womens-8-black-white-gum-orig.png",
-	    price: 59.99,
-	    gender: "woman"
-	  },
-	
-	  "corby-womens-2": {
-	    id: "corby-womens-2",
-	    name: "Corby Women's",
-	    imagePath: "img/shoes/corby-womens-2-tan-white-orig.png",
-	    price: 44.99,
-	    gender: "woman"
+	    return React.createElement("div", { className: "product" }, React.createElement("div", { className: "product__display" }, React.createElement("div", { className: "product__img-wrapper" }, React.createElement("img", { className: "product__img", src: imagePath })), cartItems[id] ? React.createElement(QuantityControl, { item: cartItems[id], variant: "gray" }) : React.createElement("div", { className: "product__control" }, React.createElement("a", { className: "product__add", onClick: this.onClick.bind(this, id) }, React.createElement("img", { className: "product__add__icon", src: "img/cart-icon.svg" }))), React.createElement("div", { className: "product__price" }, "$" + price)), React.createElement("div", { className: "product__description" }, React.createElement("div", { className: "product__name" }, name), likedItems[id] ? React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart-liked.svg" }) : React.createElement("img", { className: "product__heart", onClick: this.heartClick.bind(this, id), src: "img/heart.svg" })));
 	  }
-	};
+	});
 	
-	var _showOnlyLike = false;
+	module.exports = Product;
+
+/***/ },
+/* 168 */
+/*!******************************************!*\
+  !*** ./js/components/QuantityControl.js ***!
+  \******************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var React = __webpack_require__(/*! react */ 1);
+	var action = __webpack_require__(/*! ../action */ 193);
+	var updateCartItemQuantity = action.updateCartItemQuantity;
+	
+	var QuantityControl = React.createClass({
+	  displayName: "QuantityControl",
+	
+	  onClick: function onClick(productId, quantity) {
+	    if (quantity > 0) {
+	      updateCartItemQuantity(productId, quantity);
+	    }
+	  },
+	  render: function render() {
+	    var _props$item = this.props.item;
+	    var id = _props$item.id;
+	    var quantity = _props$item.quantity;
+	
+	    var variant = this.props.variant;
+	    return React.createElement("div", { className: "product__control" }, React.createElement("div", { className: "adjust-qty" + (variant ? " adjust-qty--" + variant : "") }, React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity - 1) }, "-"), React.createElement("div", { className: "adjust-qty__number" }, quantity), React.createElement("a", { className: "adjust-qty__button", onClick: this.onClick.bind(this, id, quantity + 1) }, "+")));
+	  }
+	});
+	module.exports = QuantityControl;
+
+/***/ },
+/* 169 */
+/*!********************************!*\
+  !*** ./js/stores/CartStore.js ***!
+  \********************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var EventEmitter = __webpack_require__(/*! events */ 163);
+	var AppDispatcher = __webpack_require__(/*! ../AppDispatcher */ 194);
+	var emitter = new EventEmitter();
+	
+	var _cartItems = {};
 	
 	function emitChange() {
 	  emitter.emit("change");
 	}
 	
+	// Writer methods. These are the "actions".
+	function addCartItem(_ref) {
+	  var productId = _ref.productId;
+	
+	  if (!_cartItems[productId]) {
+	    _cartItems[productId] = {
+	      id: productId,
+	      quantity: 1
+	    };
+	  } else {
+	    _cartItems[productId][quantity] += 1;
+	  }
+	  emitChange();
+	}
+	
+	function removeCartItem(_ref2) {
+	  var productId = _ref2.productId;
+	
+	  delete _cartItems[productId];
+	  emitChange();
+	}
+	
+	function updateCartItemQuantity(_ref3) {
+	  var productId = _ref3.productId;
+	  var quantity = _ref3.quantity;
+	
+	  _cartItems[productId] = {
+	    id: productId,
+	    quantity: quantity
+	  };
+	  emitChange();
+	}
+	
+	AppDispatcher.register(function (action) {
+	  if (action.type === "addCartItem") {
+	    addCartItem(action);
+	  }
+	});
+	
+	AppDispatcher.register(function (action) {
+	  if (action.type === "removeCartItem") {
+	    removeCartItem(action);
+	  }
+	});
+	
+	AppDispatcher.register(function (action) {
+	  if (action.type === "updateCartItemQuantity") {
+	    updateCartItemQuantity(action);
+	  }
+	});
+	
 	module.exports = {
-	  // Readers
-	  products: function products() {
-	    return _products;
+	
+	  // Reader methods
+	  cartItems: function cartItems() {
+	    return _cartItems;
 	  },
 	
-	  filteredProducts: function filteredProducts() {
-	    // Return all products or only liked products, depending on _showOnlyLike
-	    if (_showOnlyLike) {
-	      var likedItems = LikedStore.likedItems();
-	      return likedItems;
-	    } else {
-	      return _products;
-	    }
-	  },
-	
-	  // Actions
-	  toggleShowOnlyLike: function toggleShowOnlyLike() {
-	    _showOnlyLike = !_showOnlyLike;
-	    emitChange();
-	  },
-	  isShowOnlyLike: function isShowOnlyLike() {
-	    return _showOnlyLike;
-	  },
 	  addChangeListener: function addChangeListener(callback) {
 	    emitter.addListener("change", callback);
 	  },
@@ -19694,7 +19723,6 @@
 	  removeChangeListener: function removeChangeListener(callback) {
 	    emitter.removeListener("change", callback);
 	  }
-	
 	};
 
 /***/ },
@@ -19739,8 +19767,8 @@
 	}
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var connect = __webpack_require__(/*! ./connect */ 166);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
+	var connect = __webpack_require__(/*! ./connect */ 159);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 169);
 	var CartItem = __webpack_require__(/*! ./CartItem */ 171);
 	var Ps = __webpack_require__(/*! perfect-scrollbar */ 172);
 	var Cart = React.createClass({
@@ -19786,11 +19814,14 @@
 	"use strict";
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
-	var removeCartItem = CartStore.removeCartItem;
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 162);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 169);
 	
-	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 161);
+	var _require = __webpack_require__(/*! ../action */ 193);
+	
+	var removeCartItem = _require.removeCartItem;
+	
+	var QuantityControl = __webpack_require__(/*! ./QuantityControl */ 168);
 	
 	var CartItem = React.createClass({
 	  displayName: "CartItem",
@@ -21387,9 +21418,9 @@
 	}
 	
 	var React = __webpack_require__(/*! react */ 1);
-	var connect = __webpack_require__(/*! ./connect */ 166);
-	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 162);
-	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 169);
+	var connect = __webpack_require__(/*! ./connect */ 159);
+	var CartStore = __webpack_require__(/*! ../stores/CartStore */ 169);
+	var ProductsStore = __webpack_require__(/*! ../stores/ProductsStore */ 162);
 	var Checkout = React.createClass({
 	  displayName: "Checkout",
 	
@@ -21425,6 +21456,116 @@
 	})(Checkout);
 	
 	module.exports = ConnectedCheckout;
+
+/***/ },
+/* 193 */
+/*!**********************!*\
+  !*** ./js/action.js ***!
+  \**********************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var AppDispatcher = __webpack_require__(/*! ./AppDispatcher */ 194);
+	
+	function addCartItem(productId) {
+	  AppDispatcher.dispatcher({ type: "addCartItem", productId: productId });
+	}
+	
+	function removeCartItem(productId) {
+	  AppDispatcher.dispatcher({ type: "removeCartItem", productId: productId });
+	}
+	
+	function updateCartItemQuantity(productId, quantity) {
+	  AppDispatcher.dispatcher({ type: "updateCartItemQuantity", productId: productId, quantity: quantity });
+	}
+	module.exports = {
+	  addCartItem: addCartItem, removeCartItem: removeCartItem, updateCartItemQuantity: updateCartItemQuantity
+	};
+
+/***/ },
+/* 194 */
+/*!*****************************!*\
+  !*** ./js/AppDispatcher.js ***!
+  \*****************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var _createClass = (function () {
+	  function defineProperties(target, props) {
+	    for (var i = 0; i < props.length; i++) {
+	      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+	    }
+	  }return function (Constructor, protoProps, staticProps) {
+	    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+	  };
+	})();
+	
+	function _interopRequireDefault(obj) {
+	  return obj && obj.__esModule ? obj : { "default": obj };
+	}
+	
+	function _classCallCheck(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+	
+	var _events = __webpack_require__(/*! events */ 163);
+	
+	var _events2 = _interopRequireDefault(_events);
+	
+	var EVENT_NAME = "action";
+	
+	var AppDispatcher = (function () {
+	  function AppDispatcher() {
+	    _classCallCheck(this, AppDispatcher);
+	
+	    this.emitter = new _events2["default"]();
+	  }
+	
+	  _createClass(AppDispatcher, [{
+	    key: "register",
+	    value: function register(handler) {
+	      this.emitter.addListener(EVENT_NAME, handler);
+	    }
+	  }, {
+	    key: "unregister",
+	    value: function unregister(handler) {
+	      this.emitter.removeListener(EVENT_NAME, handler);
+	    }
+	  }, {
+	    key: "dispatcher",
+	    value: function dispatcher(action) {
+	      this.emitter.emit(EVENT_NAME, action);
+	    }
+	  }]);
+	
+	  return AppDispatcher;
+	})();
+	
+	module.exports = new AppDispatcher();
+
+/***/ },
+/* 195 */
+/*!******************************!*\
+  !*** ./js/LoggingService.js ***!
+  \******************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	var AppDispatcher = __webpack_require__(/*! ./AppDispatcher */ 194);
+	
+	module.exports = function enableLogging() {
+	  AppDispatcher.register(function (action) {
+	    console.log(JSON.stringify({
+	      timestamp: new Date(),
+	      action: action
+	    }, undefined, 2));
+	  });
+	};
 
 /***/ }
 /******/ ]);
